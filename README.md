@@ -60,7 +60,8 @@ Esto con la finalidad de permitir trabajar en paralelo sin causar conflicto con 
 
 3. Merges
 
-Todos los Merges seran revisados previamente antes del deployment
+Todos los Merges seran revisados previamente antes del deployment, deberan revisar si es funcional no se haran reverts considerando la perdida de trabajo de los demas integrantes, salvo sea una afectacion general.
+Debido al ser proyecto universitario se maneja de esa manera y cada dev es responsable lo que suceda en su modulo y su respectivo funcionamiento.
 
 4. Estructura
 
