@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || 'mongodb+srv://emporinone:emporinone@emporinone.dgwe1ga.mongodb.net/?retryWrites=true&w=majority&appName=EmporinOne';
+    const mongoURI = process.env.MONGO_URI;
     await mongoose.connect(mongoURI);
     console.log('✅ Conexión a MongoDB Atlas exitosa');
   } catch (error) {
