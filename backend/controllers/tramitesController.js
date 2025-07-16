@@ -22,6 +22,7 @@ export const getTramiteById = async (req, res)=>{
 
 export const createTramite = async (req,res)=>{
     try {
+        
         const {nombreTramite, requisitos, categoria} = req.body
         const newTramite = new Tramite({
             nombreTramite, requisitos, categoria
