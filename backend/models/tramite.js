@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const tramiteSchema = new mongoose.Schema({
-  nombre_tramite:
+  nombreTramite:
   {
     type:String,
     required:true
