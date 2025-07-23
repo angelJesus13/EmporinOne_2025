@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
+import reporteRoutes from './routes/reporteRoutes.js';  
 
 dotenv.config();
 
@@ -11,12 +12,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ruta básica
+app.use('/reportes', reporteRoutes); //ruta para manejar reportes CRUD
+
 app.get('/', (req, res) => {
-  res.send('¡Hola, mundo!');
+  res.send('¡Hola, pepax!');
 });
-
-
 connectDB().then(() => {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
