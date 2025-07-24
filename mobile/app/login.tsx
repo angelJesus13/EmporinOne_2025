@@ -8,7 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Simula login exitoso
+
     router.replace('/(tabs)');
   };
 
