@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import reporteRoutes from './routes/reporteRoutes.js';  
+import tramitesRoutes from './routes/tramitesRoutes.js';
 
 dotenv.config();
 
@@ -13,6 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/reportes', reporteRoutes); //ruta para manejar reportes CRUD
+app.use('/tramites',tramitesRoutes)
+    
 
 app.get('/', (req, res) => {
   res.send('¡Hola, pepax!');
