@@ -41,10 +41,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   );
 };
 
-// Define your colors object
 const colors = {
   seasalt: '#F8F8F8',
-  unBlue: '#0057B7'
+  unBlue: '#0057B7',  
 };
 
 const styles = StyleSheet.create({
