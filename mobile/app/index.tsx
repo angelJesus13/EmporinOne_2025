@@ -1,63 +1,38 @@
-import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import type { StackNavigationProp } from '@react-navigation/stack';
+import { useRouter } from 'expo-router';
 
-type RootStackParamList = {
-  Trámites: undefined;
-  Reportes: undefined;
-  Tarjetas: undefined;
-};
+export default function Inicio() {
+  const router = useRouter();
 
-type HomeScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList>;
-};
-
-const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bienvenido a EmporinOne</Text>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Trámites')}
-      >
-        <Text style={styles.buttonText}>Trámites</Text>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/tramites/indexTramites')}>
+        <Text style={styles.buttonText}>Consulta de Trámites</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Reportes')}
-      >
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/reporte/indexReportes')}>
         <Text style={styles.buttonText}>Quejas y Sugerencias</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Tarjetas')}
-      >
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/tarjetas/indexTarjetas')}>
         <Text style={styles.buttonText}>Renovación de Tarjetas</Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-const colors = {
-  seasalt: '#F8F8F8',
-  unBlue: '#0057B7',  
-};
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.seasalt },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F8F8' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 40 },
   button: {
-    backgroundColor: colors.unBlue,
+    backgroundColor: '#0057B7',
     padding: 16,
     borderRadius: 12,
     marginVertical: 10,
     width: '80%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  buttonText: { color: 'white', fontWeight: 'bold' }
+  buttonText: { color: 'white', fontWeight: 'bold' },
 });
-
-export default HomeScreen;
