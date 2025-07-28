@@ -19,6 +19,11 @@ export default function Inicio() {
       <TouchableOpacity style={styles.button} onPress={() => router.push('/tarjetas/indexTarjetas')}>
         <Text style={styles.buttonText}>Renovación de Tarjetas</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
+        <Text style={styles.buttonText}>Iniciar Sesion</Text>
+      </TouchableOpacity>
+      
     </View>
   );
 }
