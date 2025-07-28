@@ -15,11 +15,13 @@ export default function Reportes() {
     }
 
     try {
-      const response = await axios.post('http://10.0.27.54:PORT/api/reportes', {
+      const response = await axios.post('http://10.0.27.54:3001/reportes', {
         tipo,
         categoria,
         descripcion,
       });
+
+      console.log(response.data);
 
       Alert.alert('Éxito', 'Reporte enviado correctamente.');
       // Limpia el formulario
