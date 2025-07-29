@@ -52,6 +52,7 @@ export default function AdminSolicitudes() {
       })
       .finally(() => setActualizando(''));
   };
+  
 
   const obtenerColorEstado = (estado: string) => {
     switch (estado) {
