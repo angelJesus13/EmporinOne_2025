@@ -10,6 +10,7 @@ cron.schedule('59 23 * * *', async () => {
     }
 })
 
+
 export const crearSolicitud = async (req,res)=>{
     try {
         const nuevaSolicitud = new Solicitud(req.body);

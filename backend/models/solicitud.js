@@ -20,9 +20,9 @@ const solicitudSchema = new mongoose.Schema({
     estado: {
         type: String,
         enum: ['Pendiente', 'en_proceso', 'completado'],
-        default: 'pendiente'
+        default: 'Pendiente'
     }
 });
 
-const Solicitud = mongoose.model('Solitud', solicitudSchema);
+const Solicitud = mongoose.model('Solicitud', solicitudSchema);
 export default Solicitud;
