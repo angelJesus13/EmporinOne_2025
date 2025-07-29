@@ -35,7 +35,7 @@ export default function TramiteDetalleScreen() {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://192.168.100.17:3001/tramites/${id}`)
+        .get(`http://10.7.64.153:3001/tramites/${id}`)
         .then((res) => {
           setTramite(res.data);
           setLoading(false);
@@ -56,7 +56,6 @@ export default function TramiteDetalleScreen() {
       tramiteId: tramite?._id,
     };
     console.log('Solicitud enviada:', datos);
-    // Aquí podrías hacer un POST al backend si lo deseas
   };
 
   if (loading) {
@@ -87,7 +86,7 @@ export default function TramiteDetalleScreen() {
         <Text style={styles.cardText}>Tiempo estimado: {tramite.tiempoEstimado}</Text>
       </View>
 
-      {/* Botón para mostrar formulario */}
+ 
       <TouchableOpacity
         style={styles.button}
         onPress={() => setMostrarFormulario(!mostrarFormulario)}
@@ -97,7 +96,7 @@ export default function TramiteDetalleScreen() {
         </Text>
       </TouchableOpacity>
 
-      {/* Formulario */}
+
       {mostrarFormulario && (
         <View style={styles.form}>
           <TextInput
