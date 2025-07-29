@@ -1,15 +1,28 @@
-import mongoose from 'mongoose';
+import mongoose from'mongoose'
 
 const solicitudSchema = new mongoose.Schema({
-  colaborador:{type:String, required:true},
-  nombre:{type:String, required:true},
-  correo:{type:String, required:true},
-  telefono:{type:String, required:true},
-  mensaje:{type:String},
-  tramiteId:{type:mongoose.Schema.Types.ObjectId, ref:'Tramite', required:true},
-  fecha:{type:Date, default:Date.now},
-  estado:{type:String, default:'pendiente'}
+  colaborador: {
+    type: String,
+    required: true  
+    },
+    nombre: String,
+    correo: String,
+    mensaje:String,
+    tramiteId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tramite',
+        required: true
+    },
+    fecha:{
+        type: Date,
+        default: Date.now
+    },
+    estado: {
+        type: String,
+        enum: ['Pendiente', 'en_proceso', 'completado'],
+        default: 'pendiente'
+    }
 });
 
-const Solicitud = mongoose.model('Solicitud', solicitudSchema);
+const Solicitud = mongoose.model('Solitud', solicitudSchema);
 export default Solicitud;

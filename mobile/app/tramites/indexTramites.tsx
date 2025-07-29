@@ -55,7 +55,7 @@ export default function Tramites() {
       <TouchableOpacity style={styles.button} onPress={() => router.push('/tramites/listaTramites')}>
               <Text style={styles.buttonText}>Consulta de trámites y servicios</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('./tramites/misSolicitudes')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('./misSolicitudes')}>
               <Text style={styles.buttonText}>Mis solicitudes</Text>
       </TouchableOpacity>
       

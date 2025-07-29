@@ -1,23 +1,35 @@
-import Usuario from '../models/usuario.js';
 import Tramite from '../models/tramite.js';
 
-export const crearSolicitud = async (req, res) => {
-  try {
-    const nueva = new Solicitud(req.body);
-    const guardada = await nueva.save();
-
-    const tramite = await Tramite.findById(guardada.tramiteId);
-    const categoria = tramite.categoria;
-
-    const responsable = await Usuario.findOne({ categoria, rol: `responsable${categoria}` });
-
-    if (responsable) {
-      // Aquí puedes enviarle una notificación
-      console.log(`Notificar a ${responsable.nombre} sobre nueva solicitud de ${guardada.nombre}`);
+export const getAllTramites = async (req, res) => {
+    try{
+        const tramites = await Tramite.find()
+        res.json(tramites)
+    }catch(error){
+        res.status(500).json({mesage:'Error al obtener trámites'})
     }
+}
 
-    res.status(201).json(guardada);
-  } catch (error) {
-    res.status(400).json({ message: 'Error al crear la solicitud' });
-  }
-};
+export const getTramiteById = async (req, res)=>{
+    try {
+        const tramite = await Tramite.findById(req.params.id)
+        if(!tramite)
+            return res.status(404).json({message:'Trámite no encontrado'})
+        res.json(tramite)
+    } catch (error) {
+        res.status(500).json({message:'Error al obtener el trámite'})
+    }
+}
+
+export const createTramite = async (req,res)=>{
+    try {
+        
+        const {nombreTramite, requisitos, categoria, horario, tiempoEstimado} = req.body
+        const newTramite = new Tramite({
+            nombreTramite, requisitos, categoria, horario, tiempoEstimado
+        })
+        await newTramite.save()
+        res.status(201).json(newTramite)
+    } catch (error) {
+        res.status(400).json({message:'Error al crear el trámite'})
+    }
+}
