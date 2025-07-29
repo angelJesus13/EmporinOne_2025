@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import reporteRoutes from './routes/reporteRoutes.js';  
 import tramitesRoutes from './routes/tramitesRoutes.js';
-
+import contratos_saludRoutes from './routes/contratos_saludRoutes.js'
 dotenv.config();
 
 const app = express();
@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use('/reportes', reporteRoutes); //ruta para manejar reportes CRUD
 app.use('/tramites',tramitesRoutes)
+app.use('/contratos_tarjetas_salud',contratos_saludRoutes)
     
 
 app.get('/', (req, res) => {
