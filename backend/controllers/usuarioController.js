@@ -7,13 +7,14 @@ export const crearSolicitud = async (req, res) => {
     const guardada = await nueva.save();
 
     const tramite = await Tramite.findById(guardada.tramiteId);
-    const categoria = tramite.categoria;
+    const categoria = tramite.area;
 
-    const responsable = await Usuario.findOne({ categoria, rol: `responsable${categoria}` });
+    // Buscar al responsable del área
+    const responsable = await Usuario.findOne({ area, rol: `responsable${area}` });
 
     if (responsable) {
-      // Aquí puedes enviarle una notificación
-      console.log(`Notificar a ${responsable.nombre} sobre nueva solicitud de ${guardada.nombre}`);
+      // Aquí puedes enviarle una notificación (correo, mensaje interno, etc.)
+      console.log(`Notificar a ${responsable.nombre} sobre nueva solicitud`);
     }
 
     res.status(201).json(guardada);

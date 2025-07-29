@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { fetchTramites } from './tramitesApi';
@@ -14,16 +15,13 @@ type Tramite = {
   _id: string;
   nombreTramite: string;
   categoria: string;
-  requisitos: string;
-  horario: string;
-  tiempoEstimado: string;
-
 };
 
 export default function Tramites() {
   const router = useRouter();
   const [tramites, setTramites] = useState<Tramite[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filtro, setFiltro] = useState(''); 
 
   useEffect(() => {
     fetchTramites()
@@ -38,6 +36,9 @@ export default function Tramites() {
       });
   }, []);
 
+  const tramitesFiltrados = tramites.filter((t)=>
+    t.categoria.toLowerCase().includes(filtro.toLowerCase())
+    )
   const renderItem = ({ item }: { item: Tramite }) => (
     <TouchableOpacity
       style={styles.card}
@@ -50,15 +51,27 @@ export default function Tramites() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Trámites y servicios</Text>
 
-      <Text style={styles.title}>Bienvenid@ al modulo de consulta de trámites y servicios de Recursos Humanos</Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/tramites/listaTramites')}>
-              <Text style={styles.buttonText}>Consulta de trámites y servicios</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('./tramites/misSolicitudes')}>
-              <Text style={styles.buttonText}>Mis solicitudes</Text>
-      </TouchableOpacity>
+      <TextInput
+        style={styles.input}
+        placeholder="Buscar por categoría"
+        value={filtro}
+        onChangeText={setFiltro}
+        />
       
+
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#335C81" />
+      ) : (
+        <FlatList
+          data={tramitesFiltrados}
+          keyExtractor={(item) => item._id}
+          renderItem={renderItem}
+          ListEmptyComponent={<Text>No hay trámites disponibles.</Text>}
+        />
+      )}
     </View>
   );
 }
@@ -69,6 +82,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     paddingHorizontal: 20,
     paddingTop: 40,
+  },input: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#A3C9F9',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,

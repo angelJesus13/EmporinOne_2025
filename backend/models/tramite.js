@@ -13,7 +13,9 @@ const tramiteSchema = new mongoose.Schema({
   categoria:{
     type:String, 
     required:true
-  }
+  },
+  horario:String,
+  tiempoEstimado:String
 });
 
 const Tramite = mongoose.model('Tramite', tramiteSchema);
