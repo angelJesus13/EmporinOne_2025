@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
+import { crearSolicitud } from './tramitesApi';
 
 type Tramite = {
   _id: string;
@@ -26,16 +27,18 @@ export default function TramiteDetalleScreen() {
   const [loading, setLoading] = useState(true);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
-  // Campos del formulario
+
   const [colaborador, setColaborador] = useState('');
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [mensaje, setMensaje] = useState('');
 
+
+  
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://10.7.64.153:3001/tramites/${id}`)
+        .get(`http://10.0.27.49:3001/tramites/${id}`)
         .then((res) => {
           setTramite(res.data);
           setLoading(false);
@@ -47,15 +50,29 @@ export default function TramiteDetalleScreen() {
     }
   }, [id]);
 
-  const enviarSolicitud = () => {
+  const enviarSolicitud = async () => {
+    if(!tramite) return
     const datos = {
-      colaborador,
-      nombre,
-      correo,
-      mensaje,
-      tramiteId: tramite?._id,
-    };
-    console.log('Solicitud enviada:', datos);
+        colaborador,
+        nombre,
+        correo,
+        mensaje,
+        tramiteId: tramite._id,
+    }
+
+    try{
+        const res = await crearSolicitud(datos);
+        alert('Solicitud enviada con éxito');
+        setMostrarFormulario(false);
+        setColaborador(''); 
+        setNombre('');
+        setCorreo('');
+        setMensaje('');
+    }catch(err) {
+        console.error('Error al enviar solicitud:', err);
+        alert('Error al enviar solicitud. Inténtalo de nuevo más tarde.');
+    }
+    
   };
 
   if (loading) {
