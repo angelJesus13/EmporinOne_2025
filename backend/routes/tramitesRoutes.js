@@ -3,8 +3,8 @@ import { getAllTramites, getTramiteById, createTramite } from '../controllers/tr
 
 const router = express.Router()
 
-router.get('/', getAllTramites) // Obtener todos los trámites
-router.get('/:id', getTramiteById) // Obtener un trámite por ID
-router.post('/', createTramite) // Crear un nuevo trámite
+router.get('/', getAllTramites)
+router.get('/:id', getTramiteById) 
+router.post('/', createTramite)
 
 export default router
