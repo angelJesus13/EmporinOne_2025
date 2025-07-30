@@ -13,6 +13,11 @@ const solicitudSchema = new mongoose.Schema({
         ref: 'Tramite',
         required: true
     },
+    usuarioId: {
+        type: mongoose.Schema.Types.ObjectId,   
+        ref: 'Usuario',
+        required: true
+    },
     fecha:{
         type: Date,
         default: Date.now

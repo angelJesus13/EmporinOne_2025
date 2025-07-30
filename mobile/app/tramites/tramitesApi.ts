@@ -14,4 +14,5 @@ export const crearSolicitud = (datos:{
     correo: string;
     mensaje: string;
     tramiteId: string;
+    usuarioId: string;
 })  => API.post('/solicitudes', datos);

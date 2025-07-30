@@ -1,7 +1,6 @@
 import Solicitud from '../models/solicitud.js';
 import cron from 'node-cron';
 
-// Tarea programada: eliminar solicitudes finalizadas todos los días a las 11:59 PM
 cron.schedule('59 23 * * *', async () => {
   try {
     const resultado = await Solicitud.deleteMany({ estado: 'Finalizado' });
@@ -11,7 +10,6 @@ cron.schedule('59 23 * * *', async () => {
   }
 });
 
-// Validar campos básicos
 function validarSolicitud({ nombre, correo, colaborador, tramiteId }) {
   const errores = [];
 
@@ -47,6 +45,8 @@ export const obtenerSolicitudes = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener solicitudes' });
   }
 };
+
+
 
 export const updateEstadoSolicitud = async (req, res) => {
   try {

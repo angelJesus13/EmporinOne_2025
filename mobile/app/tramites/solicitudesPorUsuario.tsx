@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
-import { crearSolicitud } from './tramitesApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { crearSolicitud } from './tramitesApi';
 
 type Tramite = {
   _id: string;
@@ -28,14 +28,11 @@ export default function TramiteDetalleScreen() {
   const [loading, setLoading] = useState(true);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
-
   const [colaborador, setColaborador] = useState('');
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [mensaje, setMensaje] = useState('');
 
-
-  
   useEffect(() => {
     if (id) {
       axios
@@ -55,12 +52,13 @@ export default function TramiteDetalleScreen() {
   if (!tramite) return;
 
   try {
-    const usuarioId = await AsyncStorage.getItem('usuarioId');
-
-    if (!usuarioId) {
+    const usuarioRaw = await AsyncStorage.getItem('usuario');
+    if (!usuarioRaw) {
       alert('No se encontró el usuario. Inicia sesión nuevamente.');
       return;
     }
+
+    const { id: usuarioId } = JSON.parse(usuarioRaw);
 
     const datos = {
       colaborador,
@@ -68,11 +66,13 @@ export default function TramiteDetalleScreen() {
       correo,
       mensaje,
       tramiteId: tramite._id,
-      usuarioId, // ahora sí ya tiene valor
+      usuarioId,
     };
 
     const res = await crearSolicitud(datos);
     alert('Solicitud enviada con éxito');
+
+    // Limpiar el formulario
     setMostrarFormulario(false);
     setColaborador('');
     setNombre('');
@@ -112,7 +112,6 @@ export default function TramiteDetalleScreen() {
         <Text style={styles.cardText}>Tiempo estimado: {tramite.tiempoEstimado}</Text>
       </View>
 
- 
       <TouchableOpacity
         style={styles.button}
         onPress={() => setMostrarFormulario(!mostrarFormulario)}
@@ -122,24 +121,26 @@ export default function TramiteDetalleScreen() {
         </Text>
       </TouchableOpacity>
 
-
       {mostrarFormulario && (
         <View style={styles.form}>
           <TextInput
             style={styles.input}
             placeholder="Número de colaborador"
+            placeholderTextColor="#555"
             value={colaborador}
             onChangeText={setColaborador}
           />
           <TextInput
             style={styles.input}
             placeholder="Nombre"
+            placeholderTextColor="#555"
             value={nombre}
             onChangeText={setNombre}
           />
           <TextInput
             style={styles.input}
             placeholder="Correo electrónico"
+            placeholderTextColor="#555"
             value={correo}
             onChangeText={setCorreo}
             keyboardType="email-address"
@@ -147,6 +148,7 @@ export default function TramiteDetalleScreen() {
           <TextInput
             style={[styles.input, { height: 80 }]}
             placeholder="Mensaje (opcional)"
+            placeholderTextColor="#555"
             value={mensaje}
             onChangeText={setMensaje}
             multiline

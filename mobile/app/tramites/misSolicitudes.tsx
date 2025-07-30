@@ -10,8 +10,12 @@ import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 
 type Tramite = {
+  _id: string;
   nombreTramite: string;
   categoria: string;
+  requisitos: string;
+  horario: string;
+  tiempoEstimado: string;
 };
 
 type Solicitud = {
@@ -22,6 +26,7 @@ type Solicitud = {
   mensaje?: string;
   estado?: string;
   tramiteId: Tramite;
+
 };
 
 export default function AdminSolicitudes() {

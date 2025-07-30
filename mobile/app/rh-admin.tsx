@@ -7,11 +7,15 @@ export default function RhAdmin() {
   const irAReportes = () => {
     router.push('/reporte/reportesAdmin');
   };
-
+  const irASolicitudes = () => {
+    router.push('/tramites/misSolicitudes');
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Bienvenido RH Admin</Text>
-
+      <TouchableOpacity style={styles.boton} onPress={irASolicitudes}>
+        <Text style={styles.textoBoton}>Ver trámites y servicios</Text> 
+      </TouchableOpacity>
       <TouchableOpacity style={styles.boton} onPress={irAReportes}>
         <Text style={styles.textoBoton}>Ver reportes de quejas y sugerencias</Text>
       </TouchableOpacity>
