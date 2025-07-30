@@ -7,6 +7,7 @@ const RH_ADMIN_CORREOS = [
   'recursos.humanos@hotelesemporio.com'
 ];
 
+
 const SUPER_ADMIN_CORREOS = [
   'mambario@grupodiestra.com',
   'admin.global@grupodiestra.com',
@@ -58,5 +59,43 @@ export const register = async (req, res) => {
   } catch (error) {
     console.error('Error en registro:', error);
     res.status(500).json({ mensaje: 'Error al registrar usuario' });
+  }
+};
+
+export const login = async (req, res) => {
+  const { identificador, contraseña } = req.body;
+
+  if (!identificador || !contraseña) {
+    return res.status(400).json({ mensaje: 'Faltan datos' });
+  }
+
+  try {
+    const usuario = await Usuario.findOne({
+      $or: [
+        { numeroColaborador: identificador },
+        { correo: identificador.toLowerCase() }
+      ]
+    });
+
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    const validPass = await bcrypt.compare(contraseña, usuario.contraseña);
+    if (!validPass) {
+      return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
+    }
+
+    res.json({
+      mensaje: 'Inicio de sesión exitoso',
+      usuario: {
+        id: usuario._id,
+        nombre: usuario.nombreCompleto,
+        rol: usuario.rol
+      }
+    });
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({ mensaje: 'Error en el servidor' });
   }
 };
