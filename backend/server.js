@@ -7,6 +7,7 @@ import tramitesRoutes from './routes/tramitesRoutes.js';
 import solicitudesRoutes from './routes/solicitudesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 
+import contratosSaludRoutes from './routes/contratos_saludRoutes.js';
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/reportes', reporteRoutes); //ruta para manejar reportes CRUD
 app.use('/tramites',tramitesRoutes)
 app.use('/solicitudes', solicitudesRoutes); //ruta para manejar solicitudes CRUD
+app.use('/contratos_tarjetas_salud', contratosSaludRoutes);    
 app.use('/auth', authRoutes);
     
 
