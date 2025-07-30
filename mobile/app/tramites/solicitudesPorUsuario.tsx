@@ -72,7 +72,6 @@ export default function TramiteDetalleScreen() {
     const res = await crearSolicitud(datos);
     alert('Solicitud enviada con éxito');
 
-    // Limpiar el formulario
     setMostrarFormulario(false);
     setColaborador('');
     setNombre('');

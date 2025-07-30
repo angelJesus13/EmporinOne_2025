@@ -51,26 +51,33 @@ export default function TramiteDetalleScreen() {
     }
   }, [id]);
 
-  const enviarSolicitud = async () => {
+const enviarSolicitud = async () => {
   if (!tramite) return;
 
+  const usuarioRaw = await AsyncStorage.getItem('usuario');
+  const usuarioId = usuarioRaw ? JSON.parse(usuarioRaw).id : null;
+
+  if (!usuarioId) {
+    alert('No se encontró el usuario. Inicia sesión nuevamente.');
+    return;
+  }
+
+  const correoValido = /\S+@\S+\.\S+/.test(correo);
+  if (!colaborador || !nombre || !correo || !correoValido) {
+    alert('Por favor, completa todos los campos requeridos con datos válidos.');
+    return;
+  }
+
+  const datos = {
+    colaborador,
+    nombre,
+    correo,
+    mensaje,
+    tramiteId: tramite._id,
+    usuarioId,
+  };
+
   try {
-    const usuarioId = await AsyncStorage.getItem('usuarioId');
-
-    if (!usuarioId) {
-      alert('No se encontró el usuario. Inicia sesión nuevamente.');
-      return;
-    }
-
-    const datos = {
-      colaborador,
-      nombre,
-      correo,
-      mensaje,
-      tramiteId: tramite._id,
-      usuarioId, // ahora sí ya tiene valor
-    };
-
     const res = await crearSolicitud(datos);
     alert('Solicitud enviada con éxito');
     setMostrarFormulario(false);
@@ -83,6 +90,7 @@ export default function TramiteDetalleScreen() {
     alert('Error al enviar solicitud. Inténtalo de nuevo más tarde.');
   }
 };
+
 
 
   if (loading) {
