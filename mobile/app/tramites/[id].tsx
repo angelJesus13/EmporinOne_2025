@@ -38,7 +38,7 @@ export default function TramiteDetalleScreen() {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://0.0.0.0:3001/tramites/${id}`)
+        .get(`http://192.168.100.17:3001/tramites/${id}`)
         .then((res) => {
           setTramite(res.data);
           setLoading(false);
