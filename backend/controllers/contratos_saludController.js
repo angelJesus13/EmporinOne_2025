@@ -1,7 +1,7 @@
-const ContratoSalud = require('../models/contratos_salud');
-const moment = require('moment');
+import ContratoSalud from '../models/contratos_salud.js';
+import moment from 'moment';
 
-exports.obtenerEstadoUsuario = async (req, res) => {
+export const obtenerEstadoUsuario = async (req, res) => {
   try {
     const { email } = req.params;
 
@@ -12,9 +12,9 @@ exports.obtenerEstadoUsuario = async (req, res) => {
     }
 
     const hoy = moment();
-    const fechaFin = moment(usuario.fechaFinContrato);
-    const fechaTarjeta = moment(usuario.fechaExpedicionTarjetaSalud);
-
+    const fechaFin = moment(usuario.contrato.fechaFin);
+    const fechaTarjeta = moment(usuario.tarjetaSalud.fechaEmision);
+    
     const diasRestantesContrato = fechaFin.diff(hoy, 'days');
     const tarjetaSaludVencida = hoy.diff(fechaTarjeta, 'months') >= 6;
     const mesesRestantesTarjeta = 6 - hoy.diff(fechaTarjeta, 'months');
@@ -22,9 +22,9 @@ exports.obtenerEstadoUsuario = async (req, res) => {
     return res.json({
       nombre: usuario.nombre,
       contrato: {
-        firmado: usuario.firmado,
+        firmado: usuario.contrato.firmado,
         diasRestantes: diasRestantesContrato,
-        fechaFin: usuario.fechaFinContrato
+        fechaFin: usuario.contrato.fechaFin
       },
       tarjetaSalud: {
         vencida: tarjetaSaludVencida,

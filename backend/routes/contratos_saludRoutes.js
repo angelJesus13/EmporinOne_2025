@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import { obtenerEstadoUsuario } from '../controllers/contratos_saludController.js';
+
 const router = express.Router();
-const contratosSaludController = require('../controllers/contratos_saludController');
 
 // Endpoint para obtener el estado del usuario por email
-router.get('/:email', contratosSaludController.obtenerEstadoUsuario);
+router.get('/:email', obtenerEstadoUsuario);
 
-module.exports = router;
+export default router;
