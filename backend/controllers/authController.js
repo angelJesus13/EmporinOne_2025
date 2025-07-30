@@ -7,7 +7,6 @@ const RH_ADMIN_CORREOS = [
   'recursos.humanos@hotelesemporio.com'
 ];
 
-
 const SUPER_ADMIN_CORREOS = [
   'mambario@grupodiestra.com',
   'admin.global@grupodiestra.com',
