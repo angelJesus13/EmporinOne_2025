@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import reporteRoutes from './routes/reporteRoutes.js';  
 import tramitesRoutes from './routes/tramitesRoutes.js';
 import solicitudesRoutes from './routes/solicitudesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use('/reportes', reporteRoutes); //ruta para manejar reportes CRUD
 app.use('/tramites',tramitesRoutes)
 app.use('/solicitudes', solicitudesRoutes); //ruta para manejar solicitudes CRUD
-//app.use('/contratos_tarjetas_salud',contratos_saludRoutes)
+app.use('/auth', authRoutes);
     
 
 app.get('/', (req, res) => {
@@ -25,7 +26,7 @@ app.get('/', (req, res) => {
 });
 connectDB().then(() => {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(` Servidor corriendo en puerto ${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
   });
 });

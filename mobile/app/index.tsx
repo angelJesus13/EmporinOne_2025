@@ -6,19 +6,7 @@ export default function Inicio() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido a EmporinOne</Text>
-
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/tramites/indexTramites')}>
-        <Text style={styles.buttonText}>Consulta de Trámites</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/reporte/indexReportes')}>
-        <Text style={styles.buttonText}>Quejas y Sugerencias</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/tarjetas/indexTarjetas')}>
-        <Text style={styles.buttonText}>Renovación de Tarjetas</Text>
-      </TouchableOpacity>
+      
 
       <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
         <Text style={styles.buttonText}>Iniciar Sesion</Text>
