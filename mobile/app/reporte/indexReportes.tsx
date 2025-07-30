@@ -76,6 +76,7 @@ export default function Reportes() {
         <TouchableOpacity style={styles.button} onPress={enviarReporte}>
           <Text style={styles.buttonText}>Enviar Reporte</Text>
         </TouchableOpacity>
+        
       </View>
     </LinearGradient>
   );
