@@ -38,7 +38,7 @@ export default function TramiteDetalleScreen() {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://192.168.100.17:3001/tramites/${id}`)
+        .get(`http://10.0.27.49:3001/tramites/${id}`)
         .then((res) => {
           setTramite(res.data);
           setLoading(false);
@@ -94,7 +94,6 @@ export default function TramiteDetalleScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Card compacta */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>{tramite.nombreTramite}</Text>
         <Text style={styles.cardText}>Categoría: {tramite.categoria}</Text>
