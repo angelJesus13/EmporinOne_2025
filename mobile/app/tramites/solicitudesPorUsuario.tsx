@@ -1,161 +1,107 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import axios from 'axios';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { crearSolicitud } from './tramitesApi';
+import axios from 'axios';
 
-type Tramite = {
+type Solicitud = {
   _id: string;
-  nombreTramite: string;
-  categoria: string;
-  requisitos: string;
-  horario: string;
-  tiempoEstimado: string;
+  tramiteId: string;
+  tramiteNombre?: string; // ← este se agregará después de la petición
+  estado: string;
+  mensaje: string;
+  fecha: string;
 };
 
-export default function TramiteDetalleScreen() {
-  const { id } = useLocalSearchParams();
-  const [tramite, setTramite] = useState<Tramite | null>(null);
+export default function SolicitudesPorUsuario() {
+  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
-  const [colaborador, setColaborador] = useState('');
-  const [nombre, setNombre] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [mensaje, setMensaje] = useState('');
 
   useEffect(() => {
-    if (id) {
-      axios
-        .get(`http://10.0.27.49:3001/tramites/${id}`)
-        .then((res) => {
-          setTramite(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error('Error al obtener trámite:', err);
-          setLoading(false);
-        });
-    }
-  }, [id]);
+    const fetchSolicitudesConTramite = async () => {
+      const usuarioRaw = await AsyncStorage.getItem('usuario');
+      const usuarioId = usuarioRaw ? JSON.parse(usuarioRaw).id : null;
 
-  const enviarSolicitud = async () => {
-  if (!tramite) return;
+      if (!usuarioId) {
+        alert('No se encontró el usuario. Inicia sesión nuevamente.');
+        return;
+      }
 
-  try {
-    const usuarioRaw = await AsyncStorage.getItem('usuario');
-    if (!usuarioRaw) {
-      alert('No se encontró el usuario. Inicia sesión nuevamente.');
-      return;
-    }
+      try {
+        const res = await axios.get(`http://10.7.64.143:3001/solicitudes/usuario/${usuarioId}`);
+        const solicitudesOriginales: Solicitud[] = res.data;
 
-    const { id: usuarioId } = JSON.parse(usuarioRaw);
+        const solicitudesConNombre = await Promise.all(
+          solicitudesOriginales.map(async (solicitud) => {
+            try {
+              const tramiteRes = await axios.get(`http://10.7.64.143:3001/tramites/${solicitud.tramiteId}`);
+              return {
+                ...solicitud,
+                tramiteNombre: tramiteRes.data.nombreTramite,
+              };
+            } catch (e) {
+              console.error('Error al obtener trámite', solicitud.tramiteId);
+              return {
+                ...solicitud,
+                tramiteNombre: 'Nombre no disponible',
+              };
+            }
+          })
+        );
 
-    const datos = {
-      colaborador,
-      nombre,
-      correo,
-      mensaje,
-      tramiteId: tramite._id,
-      usuarioId,
+        setSolicitudes(solicitudesConNombre);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error al obtener solicitudes:', err);
+        setLoading(false);
+      }
     };
 
-    const res = await crearSolicitud(datos);
-    alert('Solicitud enviada con éxito');
+    fetchSolicitudesConTramite();
+  }, []);
 
-    setMostrarFormulario(false);
-    setColaborador('');
-    setNombre('');
-    setCorreo('');
-    setMensaje('');
-  } catch (err) {
-    console.error('Error al enviar solicitud:', err);
-    alert('Error al enviar solicitud. Inténtalo de nuevo más tarde.');
-  }
-};
-
+  const getEstadoStyle = (estado: string) => {
+    switch (estado.toLowerCase()) {
+      case 'pendiente':
+        return { backgroundColor: '#FFBABA' };
+      case 'en proceso':
+        return { backgroundColor: '#FFE5B4' };
+      case 'finalizado':
+        return { backgroundColor: '#C6F6C4' };
+      default:
+        return { backgroundColor: '#DDD' };
+    }
+  };
 
   if (loading) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#335C81" />
-        <Text>Cargando trámite...</Text>
-      </View>
-    );
-  }
-
-  if (!tramite) {
-    return (
-      <View style={styles.container}>
-        <Text>No se encontró el trámite.</Text>
+        <Text>Cargando tus solicitudes...</Text>
       </View>
     );
   }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>{tramite.nombreTramite}</Text>
-        <Text style={styles.cardText}>Categoría: {tramite.categoria}</Text>
-        <Text style={styles.cardText}>Requisitos: {tramite.requisitos}</Text>
-        <Text style={styles.cardText}>Horario: {tramite.horario}</Text>
-        <Text style={styles.cardText}>Tiempo estimado: {tramite.tiempoEstimado}</Text>
-      </View>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setMostrarFormulario(!mostrarFormulario)}
-      >
-        <Text style={styles.buttonText}>
-          {mostrarFormulario ? 'Cancelar solicitud' : 'Solicitar trámite'}
-        </Text>
-      </TouchableOpacity>
-
-      {mostrarFormulario && (
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Número de colaborador"
-            placeholderTextColor="#555"
-            value={colaborador}
-            onChangeText={setColaborador}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre"
-            placeholderTextColor="#555"
-            value={nombre}
-            onChangeText={setNombre}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Correo electrónico"
-            placeholderTextColor="#555"
-            value={correo}
-            onChangeText={setCorreo}
-            keyboardType="email-address"
-          />
-          <TextInput
-            style={[styles.input, { height: 80 }]}
-            placeholder="Mensaje (opcional)"
-            placeholderTextColor="#555"
-            value={mensaje}
-            onChangeText={setMensaje}
-            multiline
-          />
-          <TouchableOpacity style={styles.submitButton} onPress={enviarSolicitud}>
-            <Text style={styles.submitText}>Enviar solicitud</Text>
-          </TouchableOpacity>
-        </View>
+      {solicitudes.length === 0 ? (
+        <Text style={styles.emptyText}>No tienes solicitudes registradas.</Text>
+      ) : (
+        solicitudes.map((s) => (
+          <View key={s._id} style={styles.card}>
+            <Text style={styles.title}>{s.tramiteNombre}</Text>
+            <View style={[styles.estadoBox, getEstadoStyle(s.estado)]}>
+              <Text style={styles.estadoText}>{s.estado}</Text>
+            </View>
+            <Text style={styles.label}>Fecha:</Text>
+            <Text style={styles.value}>{new Date(s.fecha).toLocaleDateString()}</Text>
+            {s.mensaje && (
+              <>
+                <Text style={styles.label}>Mensaje:</Text>
+                <Text style={styles.value}>{s.mensaje}</Text>
+              </>
+            )}
+          </View>
+        ))
       )}
     </ScrollView>
   );
@@ -164,7 +110,6 @@ export default function TramiteDetalleScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    flexGrow: 1,
     backgroundColor: '#F8F8F8',
   },
   loading: {
@@ -172,58 +117,46 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  card: {
-    backgroundColor: '#E6F0FA',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0057B7',
-    marginBottom: 8,
-  },
-  cardText: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 4,
-  },
-  button: {
-    backgroundColor: '#0057B7',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
     fontSize: 16,
+    color: '#666',
   },
-  form: {
+  card: {
     backgroundColor: '#FFFFFF',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 10,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     elevation: 2,
   },
-  input: {
-    borderColor: '#A3C9F9',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-    backgroundColor: '#F8F8F8',
-  },
-  submitButton: {
-    backgroundColor: '#335C81',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  submitText: {
-    color: 'white',
+  title: {
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 16,
+    color: '#0057B7',
+    marginBottom: 6,
+  },
+  estadoBox: {
+    padding: 6,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  estadoText: {
+    fontWeight: '600',
+    color: '#222',
+  },
+  label: {
+    fontSize: 14,
+    color: '#888',
+    marginTop: 4,
+  },
+  value: {
+    fontSize: 15,
+    color: '#333',
   },
 });
