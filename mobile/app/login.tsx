@@ -15,7 +15,7 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch('http://10.0.27.49:3001/auth/login', {
+      const res = await fetch('http://10.7.64.143:3001/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identificador, contraseña }),
@@ -33,7 +33,7 @@ export default function Login() {
       await AsyncStorage.setItem('usuario', JSON.stringify({ id, nombre, rol }));
       await AsyncStorage.setItem('usuarioId', id);
 
-      
+
       Alert.alert('Bienvenido', `Hola ${nombre}`);
 
       if (rol === 'super_admin') {
