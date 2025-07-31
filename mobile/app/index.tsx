@@ -1,31 +1,79 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+
+export const options = {
+  title: '', // Header sin texto
+};
 
 export default function Inicio() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
-      
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../assets/images/LOGO-CUN-03 2.jpg')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
+
+      <Text style={styles.welcomeText}>Bienvenido a EmporinOne</Text>
 
       <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
-        <Text style={styles.buttonText}>Iniciar Sesion</Text>
+        <Text style={styles.buttonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
-      
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F8F8' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 40 },
+  container: {
+    flex: 1,
+    backgroundColor: '#F8F8F8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+  },
+  logoContainer: {
+    backgroundColor: 'white',
+    borderRadius: 150,
+    padding: 30,
+    marginBottom: 40,
+    // sombra para iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    // sombra para Android
+    elevation: 8,
+  },
+  logo: {
+    width: 150,
+    height: 150,
+  },
+  welcomeText: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#0057B7',
+    marginBottom: 50,
+    textAlign: 'center',
+  },
   button: {
     backgroundColor: '#0057B7',
-    padding: 16,
+    paddingVertical: 16,
     borderRadius: 12,
-    marginVertical: 10,
-    width: '80%',
+    width: '100%',
     alignItems: 'center',
+    shadowColor: '#0057B7',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
   },
-  buttonText: { color: 'white', fontWeight: 'bold' },
+  buttonText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 16,
+  },
 });
