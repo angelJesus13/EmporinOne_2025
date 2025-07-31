@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export const options = {
@@ -9,43 +9,66 @@ export default function Inicio() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../assets/images/LOGO-CUN-03 2.jpg')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+    <ImageBackground
+      source={require('../assets/images/ExtCun.jpg')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      
+      <View style={styles.overlay} />
+
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <ImageBackground
+            source={require('../assets/images/LOGO-CUN-03 2.jpg')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+
+        <Text style={styles.welcomeText}>Bienvenido a EmporinOne</Text>
+
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
+          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        </TouchableOpacity>
       </View>
-
-      <Text style={styles.welcomeText}>Bienvenido a EmporinOne</Text>
-
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
-      </TouchableOpacity>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#F8F8F8',
     justifyContent: 'center',
     alignItems: 'center',
+    
+  },
+  
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)', 
+  },
+  container: {
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
     paddingHorizontal: 30,
+    paddingVertical: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    width: '85%',
   },
   logoContainer: {
     backgroundColor: 'white',
     borderRadius: 150,
     padding: 30,
     marginBottom: 40,
-    // sombra para iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
-    // sombra para Android
     elevation: 8,
   },
   logo: {

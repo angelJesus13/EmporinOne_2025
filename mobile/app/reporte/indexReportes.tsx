@@ -1,34 +1,53 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity, Image, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
 export default function Reportes() {
+  const router = useRouter();
+
   const [tipo, setTipo] = useState('queja');
-  const [categoria, setCategoria] = useState('');
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [otroTipo, setOtroTipo] = useState('');
+  const [otraCategoria, setOtraCategoria] = useState('');
 
   const enviarReporte = async () => {
-    if (!categoria || !descripcion) {
+    const finalTipo = tipo === 'otro' ? otroTipo : tipo;
+    const finalCategoria = categoriaSeleccionada === 'otra' ? otraCategoria : categoriaSeleccionada;
+
+    if (!finalTipo || !finalCategoria || !descripcion) {
       Alert.alert('Error', 'Por favor completa todos los campos.');
       return;
     }
 
     try {
       const response = await axios.post('http://10.0.27.54:3001/reportes', {
-        tipo,
-        categoria,
+        tipo: finalTipo,
+        categoria: finalCategoria,
         descripcion,
       });
 
-      console.log(response.data);
       Alert.alert('Éxito', 'Reporte enviado correctamente.');
-      setCategoria('');
-      setDescripcion('');
       setTipo('queja');
+      setCategoriaSeleccionada('');
+      setDescripcion('');
+      setOtroTipo('');
+      setOtraCategoria('');
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'No se pudo enviar el reporte.');
@@ -38,52 +57,90 @@ export default function Reportes() {
   return (
     <LinearGradient colors={['#f0f4ff', '#dce8ff']} style={styles.gradient}>
       <Image
-        source={require('../../assets/images/LOGO-CUN-03.jpg')} 
+        source={require('../../assets/images/LOGO-CUN-03.jpg')}
         style={styles.backgroundLogo}
         resizeMode="contain"
       />
 
-      <View style={styles.container}>
-        <Text style={styles.title}>Quejas y Sugerencias</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <View style={styles.container}>
+          {/* Botón de regreso */}
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Text style={styles.backButtonText}>← Regresar</Text>
+          </TouchableOpacity>
 
-        <Text style={styles.label}>Tipo</Text>
-        <Picker
-          selectedValue={tipo}
-          onValueChange={(itemValue) => setTipo(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Queja" value="queja" />
-          <Picker.Item label="Sugerencia" value="sugerencia" />
-        </Picker>
+          <Text style={styles.title}>Quejas y Sugerencias</Text>
 
-        <Text style={styles.label}>Categoría</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej. Horarios, Instalaciones..."
-          value={categoria}
-          onChangeText={setCategoria}
-        />
+          <Text style={styles.label}>Tipo</Text>
+          <Picker
+            selectedValue={tipo}
+            onValueChange={(value) => setTipo(value)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Queja" value="queja" />
+            <Picker.Item label="Sugerencia" value="sugerencia" />
+            <Picker.Item label="Otro" value="otro" />
+          </Picker>
 
-        <Text style={styles.label}>Descripción</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          placeholder="Describe tu queja o sugerencia"
-          value={descripcion}
-          onChangeText={setDescripcion}
-          multiline
-        />
+          {tipo === 'otro' && (
+            <TextInput
+              style={styles.input}
+              placeholder="Especifica el tipo"
+              value={otroTipo}
+              onChangeText={setOtroTipo}
+            />
+          )}
 
-        <TouchableOpacity style={styles.button} onPress={enviarReporte}>
-          <Text style={styles.buttonText}>Enviar Reporte</Text>
-        </TouchableOpacity>
-        
-      </View>
+          <Text style={styles.label}>Categoría</Text>
+          <Picker
+            selectedValue={categoriaSeleccionada}
+            onValueChange={(value) => setCategoriaSeleccionada(value)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Selecciona una opción" value="" />
+            <Picker.Item label="Horarios" value="Horarios" />
+            <Picker.Item label="Instalaciones" value="Instalaciones" />
+            <Picker.Item label="Compañeros" value="Compañeros" />
+            <Picker.Item label="Supervisión" value="Supervisión" />
+            <Picker.Item label="Otra" value="otra" />
+          </Picker>
+
+          {categoriaSeleccionada === 'otra' && (
+            <TextInput
+              style={styles.input}
+              placeholder="Especifica la categoría"
+              value={otraCategoria}
+              onChangeText={setOtraCategoria}
+            />
+          )}
+
+          <Text style={styles.label}>Descripción</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Describe tu queja o sugerencia"
+            value={descripcion}
+            onChangeText={setDescripcion}
+            multiline
+          />
+
+          <TouchableOpacity style={styles.button} onPress={enviarReporte}>
+            <Text style={styles.buttonText}>Enviar Reporte</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  gradient: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+    paddingTop: 60,
+    alignItems: 'center',
+  },
   backgroundLogo: {
     position: 'absolute',
     width: width * 0.8,
@@ -95,11 +152,17 @@ const styles = StyleSheet.create({
   },
   container: {
     width: '90%',
-    padding: 20,
-    borderRadius: 12,
-    shadowOpacity: 0.01,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 6,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#0057B7',
+    fontWeight: '600',
   },
   title: {
     fontSize: 26,
@@ -108,11 +171,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#003366',
   },
-  label: { fontSize: 16, marginTop: 15, marginBottom: 5, color: '#333' },
+  label: {
+    fontSize: 16,
+    marginTop: 15,
+    marginBottom: 5,
+    color: '#333',
+  },
   picker: {
-    marginBottom: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.01)',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 10,
+    marginBottom: 10,
   },
   input: {
     borderWidth: 1,
