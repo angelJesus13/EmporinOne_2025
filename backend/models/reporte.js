@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 const reporteSchema = new mongoose.Schema({
   tipo: {
     type: String,
-    enum: ['queja', 'sugerencia'],
+    enum: ['queja', 'sugerencia', 'otro'], // opicon adicional para el picker dentro del formulario, es decir información adicional que seleccione algun colaborador
     required: true,
   },
   categoria: {
-    type: String,
+    type: String, 
     required: true,
   },
   descripcion: {

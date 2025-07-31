@@ -8,7 +8,7 @@ import {
 } from '../controllers/reporteController.js';
 
 const router = express.Router();
-
+//rutas para peticiones http de los reportes
 router.post('/', crearReporte);
 router.get('/', obtenerReportes);
 router.get('/:id', obtenerReportePorId);
