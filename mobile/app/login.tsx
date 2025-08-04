@@ -17,7 +17,7 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch('http://10.0.27.54:3001/auth/login', {
+      const res = await fetch('http://192.168.100.4:3001/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identificador, contraseña }),
@@ -35,9 +35,9 @@ export default function Login() {
       Alert.alert('Bienvenido', `Hola ${nombre}`);
 
       if (rol === 'super_admin') {
-        router.replace('/super-admin');
+        router.replace('/(tabs)/super-admin');
       } else if (rol === 'rh_admin') {
-        router.replace('/rh-admin');
+        router.replace('/(tabs)/rh-admin');
       } else {
         router.replace('/(tabs)');
       }
