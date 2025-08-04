@@ -1,6 +1,6 @@
 import Reporte from '../models/Reporte.js';
 
-// Crear reporte
+
 export const crearReporte = async (req, res) => {
   try {
     const nuevoReporte = new Reporte(req.body);
@@ -11,7 +11,7 @@ export const crearReporte = async (req, res) => {
   }
 };
 
-// Obtener todos los reportes
+
 export const obtenerReportes = async (req, res) => {
   try {
     const reportes = await Reporte.find();
@@ -21,7 +21,7 @@ export const obtenerReportes = async (req, res) => {
   }
 };
 
-// Obtener un solo reporte
+
 export const obtenerReportePorId = async (req, res) => {
   try {
     const reporte = await Reporte.findById(req.params.id);
