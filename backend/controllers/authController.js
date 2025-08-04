@@ -98,3 +98,74 @@ export const login = async (req, res) => {
     res.status(500).json({ mensaje: 'Error en el servidor' });
   }
 };
+
+//recuperar contraseña 
+export const obtenerPreguntaSeguridad = async (req, res) => {
+  const { identificador } = req.params;
+
+  try {
+    const usuario = await Usuario.findOne({
+      $or: [
+        { numeroColaborador: identificador },
+        { correo: identificador.toLowerCase() }
+      ]
+    });
+
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    res.json({ preguntaSeguridad: usuario.preguntaSeguridad });
+  } catch (error) {
+    console.error('Error al obtener pregunta:', error);
+    res.status(500).json({ mensaje: 'Error en el servidor' });
+  }
+};
+
+
+export const verificarRespuesta = async (req, res) => {
+  const { identificador, respuesta } = req.body;
+
+  try {
+    const usuario = await Usuario.findOne({
+      $or: [
+        { numeroColaborador: identificador },
+        { correo: identificador.toLowerCase() }
+      ]
+    });
+
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    const esCorrecta = await bcrypt.compare(respuesta.trim().toLowerCase(), usuario.respuestaSeguridad);
+    if (!esCorrecta) return res.status(401).json({ mensaje: 'Respuesta incorrecta' });
+
+    res.json({ mensaje: 'Respuesta correcta' });
+  } catch (error) {
+    console.error('Error al verificar respuesta:', error);
+    res.status(500).json({ mensaje: 'Error en el servidor' });
+  }
+};
+
+
+export const actualizarContraseña = async (req, res) => {
+  const { identificador, nuevaContraseña } = req.body;
+
+  try {
+    const hashed = await bcrypt.hash(nuevaContraseña, 10);
+
+    const usuario = await Usuario.findOneAndUpdate(
+      {
+        $or: [
+          { numeroColaborador: identificador },
+          { correo: identificador.toLowerCase() }
+        ]
+      },
+      { contraseña: hashed }
+    );
+
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    res.json({ mensaje: 'Contraseña actualizada exitosamente' });
+  } catch (error) {
+    console.error('Error al actualizar contraseña:', error);
+    res.status(500).json({ mensaje: 'Error en el servidor' });
+  }
+};

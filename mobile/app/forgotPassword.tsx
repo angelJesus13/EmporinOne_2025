@@ -1,7 +1,8 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
+import axios from 'axios';
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -17,12 +18,29 @@ export default function ForgotPassword() {
     { label: '¿Cuál es tu comida favorita?', value: 'comida' },
   ]);
 
-  const handleReset = () => {
-    alert(`Pregunta: ${preguntaSeleccionada}\nRespuesta: ${respuesta}`);
-    router.back();
-  };
-
   const isFormValid = numero_colaborador && preguntaSeleccionada && respuesta;
+
+  const handleReset = async () => {
+    try {
+      const res = await axios.post('http://192.168.100.18:3001/api/auth/verificar-respuesta', {
+        identificador: numero_colaborador,
+        respuesta: respuesta,
+      });
+
+      Alert.alert('Éxito', 'Respuesta correcta. Ahora puedes cambiar tu contraseña.', [
+        {
+          text: 'Continuar',
+          onPress: () => router.push('./controllers/autController'), // Ajusta la ruta si usas otra
+        },
+      ]);
+    } catch (error) {
+      console.error('Error al verificar respuesta:', error);
+      Alert.alert(
+        'Error',
+        error.response?.data?.mensaje || 'No se pudo verificar la respuesta'
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>
