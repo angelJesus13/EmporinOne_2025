@@ -8,32 +8,35 @@ export default function Tarjetas() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const obtenerDatos = async () => {
-      try {
-        // 📌 1. Obtener email del usuario guardado en AsyncStorage
-        const emailUsuario = await AsyncStorage.getItem('emailUsuario');
+  const obtenerDatos = async () => {
+    try {
+      // 🔹 Obtener correo del usuario guardado
+     const numeroColaborador = await AsyncStorage.getItem('numeroColaborador');
+     console.log('Número de colaborador en AsyncStorage:', numeroColaborador);
 
-        if (!emailUsuario) {
-          throw new Error('No se encontró el email del usuario');
-        }
-
-        // 📌 2. Llamar a tu API
-        const res = await fetch(`http://192.168.100.16:3001/api/contratos-salud/${emailUsuario}`);
-        if (!res.ok) {
-          throw new Error('Error al obtener datos del usuario');
-        }
-
-        const data = await res.json();
-        setEstado(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setCargando(false);
+      if (!numeroColaborador) {
+        throw new Error('No se encontró el número de colaborador del usuario');
       }
-    };
 
-    obtenerDatos();
-  }, []);
+      // Fetch usando número de colaborador
+      const res = await fetch(`http://10.0.24.70:3001/api/contratos-salud/colaborador/${numeroColaborador}`);
+
+      if (!res.ok) {
+        throw new Error('Error al obtener datos del usuario del backend');
+      }
+
+      const data = await res.json();
+      setEstado(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  obtenerDatos();
+}, []);
+
 
   if (cargando) {
     return (
@@ -57,12 +60,12 @@ export default function Tarjetas() {
       {estado && (
         <>
           <Text style={styles.title}>Renovación de Tarjetas de Salud</Text>
-          <Text>👤 Nombre: {estado.nombre}</Text>
-          <Text>📅 Contrato firmado: {estado.contrato.firmado ? 'Sí' : 'No'}</Text>
-          <Text>⏳ Días restantes contrato: {estado.contrato.diasRestantes}</Text>
-          <Text>📆 Fecha fin contrato: {new Date(estado.contrato.fechaFin).toLocaleDateString()}</Text>
-          <Text>💳 Tarjeta vencida: {estado.tarjetaSalud.vencida ? 'Sí' : 'No'}</Text>
-          <Text>🗓 Meses restantes tarjeta: {estado.tarjetaSalud.mesesRestantes}</Text>
+          <Text>👤 Nombre: {estado.nombreCompleto || 'No disponible'}</Text>
+          <Text>📅 Contrato firmado: {estado.contrato?.firmado ? 'Sí' : 'No'}</Text>
+          <Text>⏳ Días restantes contrato: {estado.contrato?.diasRestantes ?? 'No disponible'}</Text>
+          <Text>📆 Fecha fin contrato: {estado.contrato?.fechaFin ? new Date(estado.contrato.fechaFin).toLocaleDateString() : 'No disponible'}</Text>
+          <Text>💳 Tarjeta vencida: {estado.tarjetaSalud?.vencida ? 'Sí' : 'No'}</Text>
+          <Text>🗓 Meses restantes tarjeta: {estado.tarjetaSalud?.mesesRestantes ?? 'No disponible'}</Text>
         </>
       )}
     </View>

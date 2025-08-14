@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -49,7 +50,7 @@ export default function Register() {
 
     try {
 
-      const response = await fetch('http://192.168.100.19:3001/auth/register', {
+      const response = await fetch('http://10.0.24.70:3001/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -66,6 +67,9 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
+        // Guardar número de colaborador en AsyncStorage
+        await AsyncStorage.setItem('numeroColaborador', numeroColaborador.trim());
+
         const { rol } = data;
         Alert.alert('Éxito', `Usuario registrado con rol: ${rol}`);
 

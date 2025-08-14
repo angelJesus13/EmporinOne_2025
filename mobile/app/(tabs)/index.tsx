@@ -43,7 +43,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/tarjetas/indexTarjetas')}
         >
           <Ionicons name="card-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Renovación de Tarjetas</Text>
+          <Text style={styles.buttonText}>Renovación de Contrato y Tarjetas De Salud</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>

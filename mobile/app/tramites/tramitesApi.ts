@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL:'http://192.168.100.19:3001'
+    baseURL:'http://10.0.24.70:3001'
 })
 
 export const fetchTramites = () => API.get('/tramites')

@@ -18,7 +18,7 @@ export default function Login() {
 
     try {
 
-      const res = await fetch('http://192.168.100.19:3001/auth/login', {
+      const res = await fetch('http://10.0.24.70:3001/auth/login', {
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,11 +32,12 @@ export default function Login() {
         return;
       }
 
-      const { id, nombre, rol } = data.usuario;
+      const { id, nombre, rol,numeroColaborador } = data.usuario;
     
 
       await AsyncStorage.setItem('usuario', JSON.stringify({ id, nombre, rol }));
       await AsyncStorage.setItem('usuarioId', id);
+      await AsyncStorage.setItem('numeroColaborador', numeroColaborador.trim());
 
 
 

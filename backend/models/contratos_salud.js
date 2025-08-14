@@ -1,19 +1,28 @@
 import mongoose from "mongoose";
 
 const usuarioSchema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  colaborador: { type: String, required: true }, // Ej: código interno o número de empleado
+  nombreCompleto: { type: String, required: true },
+  correo: { type: String, required: true, unique: true }, 
+  numeroColaborador: { type: String, required: true }, 
+
+  contraseña: { type: String, required: true },
+  rol: { type: String, default: "colaborador" },
+  firebaseToken: { type: String },
+
+  preguntaSeguridad: { type: String, required: true },
+  respuestaSeguridad: { type: String, required: true },
 
   contrato: {
-    fechaInicio: { type: Date, required: true },
-    fechaFin: { type: Date, required: true },
+    fechaInicio: { type: Date },
+    fechaFin: { type: Date },
     firmado: { type: Boolean, default: false }
   },
 
   tarjetaSalud: {
-    fechaEmision: { type: Date, required: true }
-  }
+    fechaEmision: { type: Date }
+  },
+
+  fechaRegistro: { type: Date, default: Date.now }
 
 }, { timestamps: true });
 
