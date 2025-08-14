@@ -1,29 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 export default function Tarjetas() {
   const [estado, setEstado] = useState<any>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
+useEffect(() => {
   const obtenerDatos = async () => {
     try {
-      // 🔹 Obtener correo del usuario guardado
-     const numeroColaborador = await AsyncStorage.getItem('numeroColaborador');
-     console.log('Número de colaborador en AsyncStorage:', numeroColaborador);
+      const numeroColaborador = await AsyncStorage.getItem('numeroColaborador');
+      if (!numeroColaborador) throw new Error('No se encontró el número de colaborador del usuario');
 
-      if (!numeroColaborador) {
-        throw new Error('No se encontró el número de colaborador del usuario');
-      }
-
-      // Fetch usando número de colaborador
       const res = await fetch(`http://10.0.24.70:3001/api/contratos-salud/colaborador/${numeroColaborador}`);
-
-      if (!res.ok) {
-        throw new Error('Error al obtener datos del usuario del backend');
-      }
+      if (!res.ok) throw new Error('Error al obtener datos del usuario del backend');
 
       const data = await res.json();
       setEstado(data);
@@ -36,7 +28,6 @@ export default function Tarjetas() {
 
   obtenerDatos();
 }, []);
-
 
   if (cargando) {
     return (
@@ -60,10 +51,15 @@ export default function Tarjetas() {
       {estado && (
         <>
           <Text style={styles.title}>Renovación de Tarjetas de Salud</Text>
-          <Text>👤 Nombre: {estado.nombreCompleto || 'No disponible'}</Text>
+          <Text>👤 Nombre: {estado.nombre || 'No disponible'}</Text>
           <Text>📅 Contrato firmado: {estado.contrato?.firmado ? 'Sí' : 'No'}</Text>
           <Text>⏳ Días restantes contrato: {estado.contrato?.diasRestantes ?? 'No disponible'}</Text>
-          <Text>📆 Fecha fin contrato: {estado.contrato?.fechaFin ? new Date(estado.contrato.fechaFin).toLocaleDateString() : 'No disponible'}</Text>
+          <Text>
+            📆 Fecha fin contrato:{' '}
+            {estado.contrato?.fechaFin
+              ? new Date(estado.contrato.fechaFin).toLocaleDateString()
+              : 'No disponible'}
+          </Text>
           <Text>💳 Tarjeta vencida: {estado.tarjetaSalud?.vencida ? 'Sí' : 'No'}</Text>
           <Text>🗓 Meses restantes tarjeta: {estado.tarjetaSalud?.mesesRestantes ?? 'No disponible'}</Text>
         </>

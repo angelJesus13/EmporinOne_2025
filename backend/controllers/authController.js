@@ -1,6 +1,6 @@
 import Usuario from '../models/Usuario.js';
 import bcrypt from 'bcryptjs';
-
+import Contrato from '../models/contrato.js'
 const RH_ADMIN_CORREOS = [
   'cancun.capacitacion@hotelesemporio.com',
   'rh.manager@hotelesemporio.com',
@@ -50,10 +50,26 @@ export const register = async (req, res) => {
       firebaseToken,
       preguntaSeguridad,
       respuestaSeguridad: hashedRespuesta,
-      rol
+      rol,
+          contrato: {
+          fechaInicio: null, 
+          fechaFin: null,
+          firmado: false
+        },
+        tarjetaSalud: {
+          fechaEmision: null
+        }
     });
 
     await nuevoUsuario.save();
+
+    // Crear el documento base en contratos
+    const contratoBase = new Contrato({
+      usuarioId: nuevoUsuario._id
+    });
+    await contratoBase.save();
+
+
     res.status(201).json({ mensaje: 'Usuario registrado correctamente', rol });
   } catch (error) {
     console.error('Error en registro:', error);

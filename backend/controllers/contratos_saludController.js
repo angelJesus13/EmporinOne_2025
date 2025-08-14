@@ -1,46 +1,43 @@
-import ContratoSalud from '../models/contratos_salud.js';
+import Contrato from '../models/contrato.js';
+import Usuario from '../models/Usuario.js';
 import moment from 'moment';
 
-export const obtenerEstadoUsuario = async (req, res) => {
+export const obtenerContratoUsuario = async (req, res) => {
   try {
-    
     const { numeroColaborador } = req.params;
 
-    const usuario = await ContratoSalud.findOne({ numeroColaborador: numeroColaborador.trim() });
+    // 1️⃣ Buscar al usuario
+    const usuario = await Usuario.findOne({ numeroColaborador });
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
+    // 2️⃣ Buscar su contrato
+    const contratoDoc = await Contrato.findOne({ usuarioId: usuario._id });
+    if (!contratoDoc) return res.status(404).json({ message: 'Contrato no encontrado' });
 
     const hoy = moment();
 
-    // 📌 Manejar contrato seguro
+    // Contrato
     let diasRestantesContrato = null;
     let fechaFinContrato = null;
     let contratoFirmado = false;
 
-    if (usuario.contrato?.fechaFin) {
-      fechaFinContrato = moment(usuario.contrato.fechaFin);
+    if (contratoDoc.contrato?.fechaFin) {
+      fechaFinContrato = moment(contratoDoc.contrato.fechaFin);
       diasRestantesContrato = fechaFinContrato.diff(hoy, 'days');
-      contratoFirmado = usuario.contrato.firmado ?? false;
+      contratoFirmado = contratoDoc.contrato.firmado ?? false;
     }
 
-    // 📌 Manejar tarjeta de salud seguro
+    // Tarjeta de salud
     let tarjetaSaludVencida = null;
     let mesesRestantesTarjeta = null;
-
-    if (usuario.tarjetaSalud?.fechaEmision) {
-      const fechaTarjeta = moment(usuario.tarjetaSalud.fechaEmision);
+    if (contratoDoc.tarjetaSalud?.fechaEmision) {
+      const fechaTarjeta = moment(contratoDoc.tarjetaSalud.fechaEmision);
       tarjetaSaludVencida = hoy.diff(fechaTarjeta, 'months') >= 6;
-      mesesRestantesTarjeta = tarjetaSaludVencida
-        ? 0
-        : 6 - hoy.diff(fechaTarjeta, 'months');
+      mesesRestantesTarjeta = tarjetaSaludVencida ? 0 : 6 - hoy.diff(fechaTarjeta, 'months');
     }
 
-    // 📌 Respuesta final
-    return res.json({
-      nombreCompleto: usuario.nombreCompleto || "No disponible",
+    res.json({
+      nombreCompleto: usuario.nombreCompleto,
       contrato: {
         firmado: contratoFirmado,
         diasRestantes: diasRestantesContrato ?? "No disponible",
@@ -53,7 +50,7 @@ export const obtenerEstadoUsuario = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error al obtener datos del usuario', error);
+    console.error(error);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };

@@ -6,7 +6,6 @@ import reporteRoutes from './routes/reporteRoutes.js';
 import tramitesRoutes from './routes/tramitesRoutes.js';
 import solicitudesRoutes from './routes/solicitudesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-
 import contratosSaludRoutes from './routes/contratos_saludRoutes.js';
 dotenv.config();
 
@@ -21,6 +20,7 @@ app.use('/tramites',tramitesRoutes)
 app.use('/solicitudes', solicitudesRoutes); 
 app.use('/contratos_tarjetas_salud', contratosSaludRoutes);    
 app.use('/auth', authRoutes);
+app.use('/api/contratos-salud', contratosSaludRoutes);
     
 
 app.get('/', (req, res) => {
