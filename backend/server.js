@@ -13,7 +13,12 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET','POST','PUT','PATCH','DELETE'],
+  allowedHeaders: ['Content-Type','Authorization'],
+}));
+
 app.use(express.json());
 
 app.use('/reportes', reporteRoutes); //ruta para manejar reportes CRUD
@@ -27,8 +32,8 @@ app.get('/', (req, res) => {
   res.send('¡Hola, pepax!');
 });
 connectDB().then(() => {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
+  const PORT = process.env.PORT || 3001;
+    app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
   });
 });

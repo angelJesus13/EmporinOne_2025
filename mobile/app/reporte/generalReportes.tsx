@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 
 type Reporte = {
   _id: string;
@@ -20,13 +21,16 @@ type Reporte = {
   comentario?: string;
 };
 
+// URL del backend, configurable
+const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://d9058d416679.ngrok-free.app';
+
 export default function GeneralReportes() {
   const router = useRouter();
   const [reportes, setReportes] = useState<Reporte[]>([]);
 
   const fetchReportes = async () => {
     try {
-      const res = await fetch('http://10.0.24.137:3001/reportes');
+      const res = await fetch(`${API_URL}/reportes`);
       const data: Reporte[] = await res.json();
       setReportes(data);
     } catch (error) {
@@ -71,7 +75,6 @@ export default function GeneralReportes() {
         height: '100%',
       }}
     >
-      {/* Botón regresar */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleRegresar}>
           <Ionicons name="arrow-back-outline" size={16} color="#0057B7" />
@@ -91,22 +94,9 @@ export default function GeneralReportes() {
 
 const styles = StyleSheet.create({
   fondo: { flex: 1, padding: 16 },
-  header: {
-    marginTop: 36,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#0057B7',
-    fontWeight: '600',
-    marginLeft: 4,
-  },
+  header: { marginTop: 36, marginBottom: 10, flexDirection: 'row', justifyContent: 'flex-start' },
+  backButton: { flexDirection: 'row', alignItems: 'center' },
+  backButtonText: { fontSize: 16, color: '#0057B7', fontWeight: '600', marginLeft: 4 },
   card: {
     backgroundColor: '#ffffffdd',
     padding: 16,
