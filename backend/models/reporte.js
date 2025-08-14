@@ -20,7 +20,7 @@ const reporteSchema = new mongoose.Schema({
   },
   estado: {
     type: String,
-    enum: ['pendiente', 'en revisión', 'resuelto'],
+    enum: ['pendiente', 'en revisión', 'resuelto', 'atencion RH',],
     default: 'pendiente',
   },
   comentario: {

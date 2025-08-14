@@ -1,9 +1,10 @@
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Video } from 'expo-av';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Login() {
   const router = useRouter();
@@ -17,9 +18,7 @@ export default function Login() {
     }
 
     try {
-
-      const res = await fetch('http://192.168.100.19:3001/auth/login', {
-
+      const res = await fetch('http://10.0.24.137:3001/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identificador, contraseña }),
@@ -69,30 +68,51 @@ export default function Login() {
       />
 
       <View style={styles.overlay}>
+        {/* Botón volver */}
         <TouchableOpacity onPress={() => router.push('/')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#fff" />
           <Text style={styles.backText}>Inicio</Text>
         </TouchableOpacity>
 
+        {/* Título */}
         <Text style={styles.title}>Iniciar Sesión</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Correo o número de colaborador"
-          placeholderTextColor="#ccc"
-          value={identificador}
-          onChangeText={setIdentificador}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          placeholderTextColor="#ccc"
-          secureTextEntry
-          value={contraseña}
-          onChangeText={setContraseña}
-        />
-        <Button title="Entrar" onPress={handleLogin} />
+        {/* Input usuario */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={20} color="#ccc" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Correo o número de colaborador"
+            placeholderTextColor="#aaa"
+            value={identificador}
+            onChangeText={setIdentificador}
+          />
+        </View>
 
+        {/* Input contraseña */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#ccc" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor="#aaa"
+            secureTextEntry
+            value={contraseña}
+            onChangeText={setContraseña}
+          />
+        </View>
+
+        {/* Botón login */}
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <LinearGradient
+            colors={['#0057B7', '#007AFF']}
+            style={styles.loginGradient}
+          >
+            <Text style={styles.loginText}>Entrar</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        {/* Enlaces */}
         <Text onPress={() => router.push('/forgotPassword')} style={styles.link}>
           ¿Olvidaste tu contraseña?
         </Text>
@@ -109,32 +129,68 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     padding: 24,
-    paddingTop: 50,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.45)',
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
     position: 'absolute',
     top: 50,
     left: 24,
   },
   backText: {
-    marginLeft: 8,
+    marginLeft: 6,
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
   },
-  title: { fontSize: 24, marginBottom: 24, textAlign: 'center', color: '#fff' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#fff',
-    marginBottom: 12,
-    padding: 10,
-    borderRadius: 8,
+  title: {
+    fontSize: 26,
+    marginBottom: 30,
+    textAlign: 'center',
     color: '#fff',
+    fontWeight: 'bold',
   },
-  link: { color: '#fff', marginTop: 10, textAlign: 'center' },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    height: 48,
+    color: '#fff',
+    fontSize: 16,
+  },
+  loginButton: {
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginTop: 5,
+  },
+  loginGradient: {
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  loginText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  link: {
+    color: '#fff',
+    marginTop: 14,
+    textAlign: 'center',
+    fontSize: 14,
+  },
 });

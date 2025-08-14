@@ -27,7 +27,7 @@ export default function Inicio() {
         </View>
 
         <Text style={styles.welcomeText}>Bienvenido a EmporinOne</Text>
-
+        
         <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
           <Text style={styles.buttonText}>Iniciar Sesión</Text>
         </TouchableOpacity>

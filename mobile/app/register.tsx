@@ -26,8 +26,8 @@ export default function Register() {
   const firebaseToken = 'token_de_prueba_o_real';
 
   const preguntas = [
-    '¿Cuál es el nombre de tu primera mascota?',
-    '¿Cuál es el nombre de tu ciudad natal?',
+    '¿Nombre de tu primera mascota?',
+    '¿Nombre de tu ciudad natal?',
     '¿Cuál es tu comida favorita?',
   ];
 
@@ -48,8 +48,7 @@ export default function Register() {
     }
 
     try {
-
-      const response = await fetch('http://192.168.100.19:3001/auth/register', {
+      const response = await fetch('http://10.0.24.137:3001/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
