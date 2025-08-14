@@ -1,9 +1,13 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const router = useRouter();
+
+  const cerrarSesion = () => {
+    router.replace('/login');
+  };
 
   return (
     <ImageBackground
@@ -11,14 +15,20 @@ export default function HomeScreen() {
       style={styles.background}
       imageStyle={styles.imageStyle}
     >
-      {/* Header con avatar de usuario */}
+      {/* Header con avatar y botón de cerrar sesión */}
       <View style={styles.header}>
-        <Ionicons name="person-circle-outline" size={40} color="#0057B7" />
-        <Text style={styles.username}>Hola, Colaborador</Text>
+        <View style={styles.avatarContainer}>
+          <Ionicons name="person-circle-outline" size={40} color="#0057B7" />
+          <Text style={styles.username}>Hola, Colaborador</Text>
+        </View>
+
+        <TouchableOpacity style={styles.cerrarButton} onPress={cerrarSesion}>
+          <Ionicons name="log-out-outline" size={24} color="white" />
+          <Text style={styles.cerrarText}>Cerrar Sesión</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Logo principal */}
-    
       <Text style={styles.title}>Bienvenido a EmporinOne</Text>
 
       <View style={styles.menu}>
@@ -63,8 +73,13 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+  },
+  avatarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   username: {
     fontSize: 18,
@@ -72,11 +87,18 @@ const styles = StyleSheet.create({
     color: '#333',
     fontWeight: '500',
   },
-  logo: {
-    width: 160,
-    height: 80,
-    alignSelf: 'center',
-    marginBottom: 12,
+  cerrarButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF3B30',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+  cerrarText: {
+    color: 'white',
+    fontWeight: 'bold',
+    marginLeft: 4,
   },
   title: {
     fontSize: 22,

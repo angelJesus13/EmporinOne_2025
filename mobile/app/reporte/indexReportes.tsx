@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -26,6 +26,19 @@ export default function Reportes() {
   const [otroTipo, setOtroTipo] = useState('');
   const [otraCategoria, setOtraCategoria] = useState('');
 
+  // NUEVO: rol del usuario
+  const [rol, setRol] = useState<'admin' | 'colaborador' | null>(null);
+
+  useEffect(() => {
+    // Aquí se obtiene el rol, puede ser desde AsyncStorage o Context
+    const fetchRol = async () => {
+      // Ejemplo temporal:
+      const storedRol = 'colaborador'; // 'admin' o 'colaborador'
+      setRol(storedRol as 'admin' | 'colaborador');
+    };
+    fetchRol();
+  }, []);
+
   const enviarReporte = async () => {
     const finalTipo = tipo === 'otro' ? otroTipo : tipo;
     const finalCategoria = categoriaSeleccionada === 'otra' ? otraCategoria : categoriaSeleccionada;
@@ -36,7 +49,7 @@ export default function Reportes() {
     }
 
     try {
-      const response = await axios.post('http://10.0.27.54:3001/reportes', {
+      const response = await axios.post('http://10.0.24.137:3001/reportes', {
         tipo: finalTipo,
         categoria: finalCategoria,
         descripcion,
@@ -54,6 +67,21 @@ export default function Reportes() {
     }
   };
 
+  // NUEVO: cerrar sesión
+  const cerrarSesion = () => {
+    Alert.alert('Cerrar sesión', '¿Deseas cerrar sesión?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Sí',
+        onPress: () => {
+          // Aquí limpiar almacenamiento si aplica
+          // AsyncStorage.clear();
+          router.replace('/login'); // vuelve al login.tsx raíz
+        },
+      },
+    ]);
+  };
+
   return (
     <LinearGradient colors={['#f0f4ff', '#dce8ff']} style={styles.gradient}>
       <Image
@@ -64,6 +92,8 @@ export default function Reportes() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
+        
+
           {/* Botón de regreso */}
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Text style={styles.backButtonText}>← Regresar</Text>
@@ -154,6 +184,25 @@ const styles = StyleSheet.create({
     width: '90%',
     paddingHorizontal: 20,
     paddingBottom: 30,
+  },
+  bienvenida: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#003366',
+  },
+  cerrarButton: {
+    backgroundColor: '#FF3B30',
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  cerrarText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   backButton: {
     alignSelf: 'flex-start',
