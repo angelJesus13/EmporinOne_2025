@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 const reporteSchema = new mongoose.Schema({
   tipo: {
     type: String,
-    enum: ['queja', 'sugerencia'],
+    enum: ['queja', 'sugerencia', 'otro'],
     required: true,
   },
   categoria: {
-    type: String,
+    type: String, 
     required: true,
   },
   descripcion: {
@@ -22,7 +22,11 @@ const reporteSchema = new mongoose.Schema({
     type: String,
     enum: ['pendiente', 'en revisión', 'resuelto'],
     default: 'pendiente',
-  }
+  },
+  comentario: {
+    type: String,
+    default: '',
+  },
 });
 
 const Reporte = mongoose.model('Reporte', reporteSchema, 'QuejasSugerencias');

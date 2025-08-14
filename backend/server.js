@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.use('/reportes', reporteRoutes); //ruta para manejar reportes CRUD
 app.use('/tramites',tramitesRoutes)
-app.use('/solicitudes', solicitudesRoutes); //ruta para manejar solicitudes CRUD
+app.use('/solicitudes', solicitudesRoutes); 
 app.use('/contratos_tarjetas_salud', contratosSaludRoutes);    
 app.use('/auth', authRoutes);
     

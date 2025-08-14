@@ -1,6 +1,6 @@
 import Reporte from '../models/Reporte.js';
 
-// Crear reporte
+
 export const crearReporte = async (req, res) => {
   try {
     const nuevoReporte = new Reporte(req.body);
@@ -11,7 +11,7 @@ export const crearReporte = async (req, res) => {
   }
 };
 
-// Obtener todos los reportes
+
 export const obtenerReportes = async (req, res) => {
   try {
     const reportes = await Reporte.find();
@@ -21,7 +21,7 @@ export const obtenerReportes = async (req, res) => {
   }
 };
 
-// Obtener un solo reporte
+
 export const obtenerReportePorId = async (req, res) => {
   try {
     const reporte = await Reporte.findById(req.params.id);
@@ -32,16 +32,20 @@ export const obtenerReportePorId = async (req, res) => {
   }
 };
 
-// Actualizar reporte
 export const actualizarReporte = async (req, res) => {
+  console.log('Actualizar reporte ID:', req.params.id);
+  console.log('Datos recibidos para actualizar:', req.body);
+
   try {
     const actualizado = await Reporte.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!actualizado) return res.status(404).json({ error: 'Reporte no encontrado' });
     res.json(actualizado);
   } catch (error) {
+    console.error('Error actualizar reporte:', error);
     res.status(400).json({ error: 'Error al actualizar reporte' });
   }
 };
+
 
 // Eliminar reporte
 export const eliminarReporte = async (req, res) => {
