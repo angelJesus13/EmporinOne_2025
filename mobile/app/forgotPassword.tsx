@@ -22,7 +22,7 @@ export default function ForgotPassword() {
 
   const handleReset = async () => {
     try {
-      const res = await axios.post('http://192.168.100.18:3001/api/auth/verificar-respuesta', {
+      const res = await axios.post('http://192.168.100.16:3001/api/auth/verificar-respuesta', {
         identificador: numero_colaborador,
         respuesta: respuesta,
       });
