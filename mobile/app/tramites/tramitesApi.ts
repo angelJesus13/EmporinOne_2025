@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL:'http://192.168.100.17:3001'
+    baseURL:'http://192.168.100.19:3001'
 })
 
 export const fetchTramites = () => API.get('/tramites')
@@ -14,4 +14,5 @@ export const crearSolicitud = (datos:{
     correo: string;
     mensaje: string;
     tramiteId: string;
+    usuarioId: string;
 })  => API.post('/solicitudes', datos);

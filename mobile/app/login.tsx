@@ -32,7 +32,13 @@ export default function Login() {
       }
 
       const { id, nombre, rol } = data.usuario;
+    
+
       await AsyncStorage.setItem('usuario', JSON.stringify({ id, nombre, rol }));
+      await AsyncStorage.setItem('usuarioId', id);
+
+
+
       Alert.alert('Bienvenido', `Hola ${nombre}`);
 
       if (rol === 'super_admin') {

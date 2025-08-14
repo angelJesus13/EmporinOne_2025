@@ -10,8 +10,12 @@ import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 
 type Tramite = {
+  _id: string;
   nombreTramite: string;
   categoria: string;
+  requisitos: string;
+  horario: string;
+  tiempoEstimado: string;
 };
 
 type Solicitud = {
@@ -22,6 +26,7 @@ type Solicitud = {
   mensaje?: string;
   estado?: string;
   tramiteId: Tramite;
+
 };
 
 export default function AdminSolicitudes() {
@@ -43,7 +48,7 @@ export default function AdminSolicitudes() {
     setActualizando(id);
     axios.put(`http://192.168.100.17:3001/solicitudes/${id}/estado`, { estado: nuevoEstado })
       .then(() => {
-        obtenerSolicitudes(); // refrescar lista
+        obtenerSolicitudes(); 
         Alert.alert('Éxito', 'Estado actualizado');
       })
       .catch(err => {

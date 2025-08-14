@@ -90,7 +90,8 @@ export const login = async (req, res) => {
       usuario: {
         id: usuario._id,
         nombre: usuario.nombreCompleto,
-        rol: usuario.rol
+        rol: usuario.rol,
+        numeroColaborador: usuario.numeroColaborador,
       }
     });
   } catch (error) {

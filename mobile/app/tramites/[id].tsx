@@ -11,6 +11,7 @@ import {
 import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { crearSolicitud } from './tramitesApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Tramite = {
   _id: string;
@@ -38,7 +39,7 @@ export default function TramiteDetalleScreen() {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://192.168.100.17:3001/tramites/${id}`)
+        .get(`http://192.168.100.19:3001/tramites/${id}`)
         .then((res) => {
           setTramite(res.data);
           setLoading(false);
@@ -50,30 +51,47 @@ export default function TramiteDetalleScreen() {
     }
   }, [id]);
 
-  const enviarSolicitud = async () => {
-    if(!tramite) return
-    const datos = {
-        colaborador,
-        nombre,
-        correo,
-        mensaje,
-        tramiteId: tramite._id,
-    }
+const enviarSolicitud = async () => {
+  if (!tramite) return;
 
-    try{
-        const res = await crearSolicitud(datos);
-        alert('Solicitud enviada con éxito');
-        setMostrarFormulario(false);
-        setColaborador(''); 
-        setNombre('');
-        setCorreo('');
-        setMensaje('');
-    }catch(err) {
-        console.error('Error al enviar solicitud:', err);
-        alert('Error al enviar solicitud. Inténtalo de nuevo más tarde.');
-    }
-    
+  const usuarioRaw = await AsyncStorage.getItem('usuario');
+  const usuarioId = usuarioRaw ? JSON.parse(usuarioRaw).id : null;
+
+  if (!usuarioId) {
+    alert('No se encontró el usuario. Inicia sesión nuevamente.');
+    return;
+  }
+
+  const correoValido = /\S+@\S+\.\S+/.test(correo);
+  if (!colaborador || !nombre || !correo || !correoValido) {
+    alert('Por favor, completa todos los campos requeridos con datos válidos.');
+    return;
+  }
+
+  const datos = {
+    colaborador,
+    nombre,
+    correo,
+    mensaje,
+    tramiteId: tramite._id,
+    usuarioId,
   };
+
+  try {
+    const res = await crearSolicitud(datos);
+    alert('Solicitud enviada con éxito');
+    setMostrarFormulario(false);
+    setColaborador('');
+    setNombre('');
+    setCorreo('');
+    setMensaje('');
+  } catch (err) {
+    console.error('Error al enviar solicitud:', err);
+    alert('Error al enviar solicitud. Inténtalo de nuevo más tarde.');
+  }
+};
+
+
 
   if (loading) {
     return (
@@ -94,7 +112,6 @@ export default function TramiteDetalleScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Card compacta */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>{tramite.nombreTramite}</Text>
         <Text style={styles.cardText}>Categoría: {tramite.categoria}</Text>
