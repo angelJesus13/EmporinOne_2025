@@ -26,7 +26,7 @@ export default function ReportesAdmin() {
 
   const fetchReportes = async () => {
     try {
-      const res = await fetch('http://10.0.24.70:3001/reportes');
+      const res = await fetch('http://192.168.100.19:3001/reportes');
       const data: Reporte[] = await res.json();
       setReportes(data);
     } catch (error) {
@@ -36,7 +36,7 @@ export default function ReportesAdmin() {
 
   const cambiarEstado = async (id: string, nuevoEstado: Reporte['estado'], comentario: string) => {
     try {
-      const res = await fetch(`http://10.0.24.70:3001/reportes/${id}`, {
+      const res = await fetch(`http://192.168.100.19:3001/reportes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado: nuevoEstado, comentario }),

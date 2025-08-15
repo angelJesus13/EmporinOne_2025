@@ -1,29 +1,25 @@
 import mongoose from "mongoose";
 
-const usuarioSchema = new mongoose.Schema({
-  nombreCompleto: { type: String, required: true },
-  correo: { type: String, required: true, unique: true }, 
-  numeroColaborador: { type: String, required: true }, 
+//este es el bueno 
 
-  contraseña: { type: String, required: true },
-  rol: { type: String, default: "colaborador" },
-  firebaseToken: { type: String },
-
-  preguntaSeguridad: { type: String, required: true },
-  respuestaSeguridad: { type: String, required: true },
-
+const contratoSchema = new mongoose.Schema({
+  usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios", required: true },
+  
   contrato: {
-    fechaInicio: { type: Date },
-    fechaFin: { type: Date },
-    firmado: { type: Boolean, default: false }
+    fechaInicio: { type: Date, default: null },
+    fechaFin: { type: Date, default: null },
+    firmado: { type: Boolean, default: false },
+    tipo: { type: String, enum: ["30", "60", "90", "Permanente"], default: "Permanente" }
   },
 
   tarjetaSalud: {
-    fechaEmision: { type: Date }
+    fechaEmision: { type: Date, default: null },
+    vigente: { type: Boolean, default: false }
   },
 
-  fechaRegistro: { type: Date, default: Date.now }
+  diasRestantes: { type: Number, default: 0 },
+  mesesRestantesTarjeta: { type: Number, default: 0 }
 
 }, { timestamps: true });
 
-export default mongoose.model("Contratos", usuarioSchema);
+export default mongoose.model("Contratos", contratoSchema);

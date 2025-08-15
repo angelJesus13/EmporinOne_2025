@@ -10,6 +10,9 @@ export default function RhAdmin() {
   const irASolicitudes = () => {
     router.push('/tramites/misSolicitudes');
   }
+  const irAContratos = () => {
+    router.push('/tarjetas/vistaRH_reportes');
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Bienvenido RH Admin</Text>
@@ -18,6 +21,9 @@ export default function RhAdmin() {
       </TouchableOpacity>
       <TouchableOpacity style={styles.boton} onPress={irAReportes}>
         <Text style={styles.textoBoton}>Ver reportes de quejas y sugerencias</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.boton} onPress={irAContratos}>
+        <Text style={styles.textoBoton}>Ver Contratos y Tarjetas de Salud</Text>
       </TouchableOpacity>
     </View>
   );

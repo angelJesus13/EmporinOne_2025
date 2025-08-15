@@ -6,11 +6,9 @@ export const obtenerContratoUsuario = async (req, res) => {
   try {
     const { numeroColaborador } = req.params;
 
-    // 1️⃣ Buscar al usuario
     const usuario = await Usuario.findOne({ numeroColaborador });
     if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-    // 2️⃣ Buscar su contrato
     const contratoDoc = await Contrato.findOne({ usuarioId: usuario._id });
     if (!contratoDoc) return res.status(404).json({ message: 'Contrato no encontrado' });
 
@@ -37,17 +35,21 @@ export const obtenerContratoUsuario = async (req, res) => {
     }
 
     res.json({
-      nombreCompleto: usuario.nombreCompleto,
-      contrato: {
-        firmado: contratoFirmado,
-        diasRestantes: diasRestantesContrato ?? "No disponible",
-        fechaFin: fechaFinContrato ? fechaFinContrato.toDate() : null
-      },
-      tarjetaSalud: {
-        vencida: tarjetaSaludVencida ?? "No disponible",
-        mesesRestantes: mesesRestantesTarjeta ?? "No disponible"
-      }
-    });
+  nombreCompleto: usuario.nombreCompleto,
+  contrato: {
+    firmado: contratoDoc.contrato.firmado ?? false,
+    diasRestantes: contratoDoc.contrato.fechaFin
+      ? moment(contratoDoc.contrato.fechaFin).diff(moment(), 'days')
+      : 'Permanente',
+    fechaFin: contratoDoc.contrato.fechaFin ?? null
+  },
+  tarjetaSalud: {
+    vigente: contratoDoc.tarjetaSalud.vigente ?? false,
+    mesesRestantes: contratoDoc.tarjetaSalud.fechaEmision
+      ? Math.max(0, 6 - moment().diff(moment(contratoDoc.tarjetaSalud.fechaEmision), 'months'))
+      : 0
+  }
+});
 
   } catch (error) {
     console.error(error);

@@ -39,14 +39,14 @@ export default function AdminSolicitudes() {
   }, []);
 
   const obtenerSolicitudes = () => {
-    axios.get('http://10.0.24.70:3001/solicitudes')
+    axios.get('http://192.168.100.19:3001/solicitudes')
       .then(res => setSolicitudes(res.data))
       .catch(err => console.error('Error al obtener solicitudes', err));
   };
 
   const actualizarEstado = (id: string, nuevoEstado: string) => {
     setActualizando(id);
-    axios.put(`http://10.0.24.70:3001/solicitudes/${id}/estado`, { estado: nuevoEstado })
+    axios.put(`http://192.168.100.19:3001/solicitudes/${id}/estado`, { estado: nuevoEstado })
       .then(() => {
         obtenerSolicitudes(); 
         Alert.alert('Éxito', 'Estado actualizado');

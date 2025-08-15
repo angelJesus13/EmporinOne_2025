@@ -27,13 +27,13 @@ export default function SolicitudesPorUsuario() {
       }
 
       try {
-        const res = await axios.get(`http://10.0.24.70:3001/solicitudes/usuario/${usuarioId}`);
+        const res = await axios.get(`http://192.168.100.19:3001/solicitudes/usuario/${usuarioId}`);
         const solicitudesOriginales: Solicitud[] = res.data;
 
         const solicitudesConNombre = await Promise.all(
           solicitudesOriginales.map(async (solicitud) => {
             try {
-              const tramiteRes = await axios.get(`http://10.0.24.70:3001/tramites/${solicitud.tramiteId}`);
+              const tramiteRes = await axios.get(`http://192.168.100.19:3001/tramites/${solicitud.tramiteId}`);
               return {
                 ...solicitud,
                 tramiteNombre: tramiteRes.data.nombreTramite,

@@ -36,7 +36,7 @@ export default function Reportes() {
     }
 
     try {
-      const response = await axios.post('http://10.0.27.54:3001/reportes', {
+      const response = await axios.post('http://192.168.100.19:3001/reportes', {
         tipo: finalTipo,
         categoria: finalCategoria,
         descripcion,

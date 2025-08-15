@@ -5,10 +5,12 @@ const contratoSchema = new mongoose.Schema({
   contrato: {
     fechaInicio: { type: Date, default: null },
     fechaFin: { type: Date, default: null },
-    firmado: { type: Boolean, default: false }
+    firmado: { type: Boolean, default: false },
+    tipo: { type: String, default: "Permanente" } // Agregado
   },
   tarjetaSalud: {
-    fechaEmision: { type: Date, default: null }
+    fechaEmision: { type: Date, default: null },
+    vigente: { type: Boolean, default: false } // Agregado
   },
   diasRestantes: { type: Number, default: 0 },
   mesesRestantesTarjeta: { type: Number, default: 0 }
