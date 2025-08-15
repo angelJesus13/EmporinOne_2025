@@ -24,7 +24,7 @@ type Reporte = {
 };
 
 // URL del backend, configurable
-const API_URL = 'https://d77878dfce5c.ngrok-free.app';
+const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://5f05bd0ac1ab.ngrok-free.app';
 
 
 export default function ReportesAdmin() {
@@ -35,10 +35,10 @@ export default function ReportesAdmin() {
   const fetchReportes = async () => {
     try {
       const res = await fetch(`${API_URL}/reportes`);
-      console.log('Status:', res.status);
-      console.log('Headers:', res.headers.get('content-type'));
+      //console.log('Status:', res.status);
+      //console.log('Headers:', res.headers.get('content-type'));
       const text = await res.text();
-      console.log('Body:', text);
+      //console.log('Body:', text);
   
       if (text.trim().startsWith('<')) {
         Alert.alert('Error', 'El backend devolvió HTML en lugar de JSON. Revisa la URL.');

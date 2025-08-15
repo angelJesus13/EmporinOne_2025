@@ -34,7 +34,7 @@ export default function Register() {
     '¿Cuál es tu comida favorita?',
   ];
 
-  const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://d9058d416679.ngrok-free.app';
+  const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://5f05bd0ac1ab.ngrok-free.app';;
 
   const handleRegister = async () => {
     if (contraseña !== confirmarContraseña) {
