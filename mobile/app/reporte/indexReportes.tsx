@@ -1,3 +1,4 @@
+// indexReportes.tsx
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -18,8 +19,9 @@ import Constants from 'expo-constants';
 
 const { width } = Dimensions.get('window');
 
-// URL del backend, configurable
-const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://d9058d416679.ngrok-free.app';
+// URL del backend (sin espacios extra)
+const API_URL =
+  (Constants.expoConfig?.extra?.API_URL || 'https://5f05bd0ac1ab.ngrok-free.app').trim();
 
 export default function Reportes() {
   const router = useRouter();
@@ -33,7 +35,6 @@ export default function Reportes() {
 
   useEffect(() => {
     const fetchRol = async () => {
-      // TODO: obtener rol desde AsyncStorage o Context
       const storedRol = 'colaborador';
       setRol(storedRol as 'admin' | 'colaborador');
     };
@@ -42,7 +43,8 @@ export default function Reportes() {
 
   const enviarReporte = async () => {
     const finalTipo = tipo === 'otro' ? otroTipo : tipo;
-    const finalCategoria = categoriaSeleccionada === 'otra' ? otraCategoria : categoriaSeleccionada;
+    const finalCategoria =
+      categoriaSeleccionada === 'otra' ? otraCategoria : categoriaSeleccionada;
 
     if (!finalTipo || !finalCategoria || !descripcion) {
       Alert.alert('Error', 'Por favor completa todos los campos.');
@@ -50,11 +52,25 @@ export default function Reportes() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/reportes`, {
+      console.log('Enviando reporte a:', `${API_URL}/reportes`);
+      console.log({
         tipo: finalTipo,
         categoria: finalCategoria,
         descripcion,
       });
+
+      const response = await axios.post(
+        `${API_URL}/reportes`,
+        {
+          tipo: finalTipo,
+          categoria: finalCategoria,
+          descripcion,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 8000,
+        }
+      );
 
       Alert.alert('Éxito', 'Reporte enviado correctamente.');
       setTipo('queja');
@@ -62,9 +78,30 @@ export default function Reportes() {
       setDescripcion('');
       setOtroTipo('');
       setOtraCategoria('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error enviando reporte:', error);
-      Alert.alert('Error', 'No se pudo enviar el reporte.');
+
+      if (error.response) {
+        // Respuesta del servidor con código de error
+        console.error('Respuesta del servidor:', error.response.data);
+        Alert.alert(
+          'Error',
+          `El servidor respondió con un error (${error.response.status}): ${JSON.stringify(
+            error.response.data
+          )}`
+        );
+      } else if (error.request) {
+        // No hubo respuesta del servidor
+        console.error('No hubo respuesta del servidor:', error.request);
+        Alert.alert(
+          'Error de conexión',
+          'No se pudo contactar con el servidor. Verifica tu conexión o que ngrok esté activo.'
+        );
+      } else {
+        // Error al configurar la solicitud
+        console.error('Error al configurar la solicitud:', error.message);
+        Alert.alert('Error', `Ocurrió un error: ${error.message}`);
+      }
     }
   };
 
@@ -88,7 +125,10 @@ export default function Reportes() {
         resizeMode="contain"
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.container}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Text style={styles.backButtonText}>← Regresar</Text>
@@ -159,16 +199,56 @@ export default function Reportes() {
 
 const styles = StyleSheet.create({
   gradient: { flex: 1 },
-  scrollContent: { paddingBottom: 40, paddingTop: 60, alignItems: 'center' },
-  backgroundLogo: { position: 'absolute', width: width * 0.8, height: width * 0.6, opacity: 0.15, top: '30%', alignSelf: 'center', zIndex: -1 },
+  scrollContent: {
+    paddingBottom: 40,
+    paddingTop: 60,
+    alignItems: 'center',
+  },
+  backgroundLogo: {
+    position: 'absolute',
+    width: width * 0.8,
+    height: width * 0.6,
+    opacity: 0.15,
+    top: '30%',
+    alignSelf: 'center',
+    zIndex: -1,
+  },
   container: { width: '90%', paddingHorizontal: 20, paddingBottom: 30 },
   backButton: { alignSelf: 'flex-start', marginBottom: 10 },
   backButtonText: { fontSize: 16, color: '#0057B7', fontWeight: '600' },
-  title: { fontSize: 26, fontWeight: 'bold', marginBottom: 30, textAlign: 'center', color: '#003366' },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    textAlign: 'center',
+    color: '#003366',
+  },
   label: { fontSize: 16, marginTop: 15, marginBottom: 5, color: '#333' },
-  picker: { backgroundColor: 'rgba(255, 255, 255, 0.5)', borderRadius: 10, marginBottom: 10 },
-  input: { borderWidth: 1, borderColor: '#D0D0D0', borderRadius: 10, backgroundColor: '#fff', padding: 12, fontSize: 16, marginBottom: 10 },
+  picker: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 10,
+  },
   textArea: { height: 100, textAlignVertical: 'top' },
-  button: { backgroundColor: '#0057B7', paddingVertical: 14, borderRadius: 10, marginTop: 30, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.15, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 },
+  button: {
+    backgroundColor: '#0057B7',
+    paddingVertical: 14,
+    borderRadius: 10,
+    marginTop: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
   buttonText: { color: '#fff', fontSize: 17, fontWeight: 'bold' },
 });
