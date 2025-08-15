@@ -1,4 +1,3 @@
-// indexReportes.tsx
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -10,19 +9,19 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
 import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
 
 const { width } = Dimensions.get('window');
 
 const API_URL =
-  (Constants.expoConfig?.extra?.API_URL || 'https://5f05bd0ac1ab.ngrok-free.app').trim();
+  (Constants.expoConfig?.extra?.API_URL || 'https://64b150907a04.ngrok-free.app').trim();
 
 export default function Reportes() {
   const router = useRouter();
@@ -33,46 +32,6 @@ export default function Reportes() {
   const [otroTipo, setOtroTipo] = useState('');
   const [otraCategoria, setOtraCategoria] = useState('');
   const [rol, setRol] = useState<'admin' | 'colaborador' | null>(null);
-  const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
-
-  // --- Registrar token para notificaciones push ---
-  useEffect(() => {
-    const registerForPushNotifications = async () => {
-      if (!Device.isDevice) {
-        Alert.alert('Error', 'Las notificaciones push solo funcionan en un dispositivo físico');
-        return;
-      }
-
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-
-      if (finalStatus !== 'granted') {
-        Alert.alert('Error', 'No se otorgaron permisos de notificaciones');
-        return;
-      }
-
-      const token = (await Notifications.getExpoPushTokenAsync()).data;
-      setExpoPushToken(token);
-
-      const userId = 'ID_DEL_COLABORADOR'; // reemplaza con el ID real del colaborador
-      await axios.post(`${API_URL}/push/save-token`, { userId, token });
-      console.log('Token registrado en backend:', token);
-    };
-
-    registerForPushNotifications();
-
-    const subscription = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notificación recibida:', notification);
-      Alert.alert(notification.request.content.title ?? '', notification.request.content.body ?? '');
-    });
-
-    return () => subscription.remove();
-  }, []);
 
   useEffect(() => {
     const fetchRol = async () => {
@@ -93,7 +52,7 @@ export default function Reportes() {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/reportes`,
         { tipo: finalTipo, categoria: finalCategoria, descripcion },
         { headers: { 'Content-Type': 'application/json' }, timeout: 8000 }
@@ -120,65 +79,74 @@ export default function Reportes() {
 
   return (
     <LinearGradient colors={['#f0f4ff', '#dce8ff']} style={styles.gradient}>
-      <Image
-        source={require('../../assets/images/LOGO-CUN-03.jpg')}
-        style={styles.backgroundLogo}
-        resizeMode="contain"
-      />
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.container}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Text style={styles.backButtonText}>← Regresar</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>Quejas y Sugerencias</Text>
-
-          <Text style={styles.label}>Tipo</Text>
-          <Picker selectedValue={tipo} onValueChange={setTipo} style={styles.picker}>
-            <Picker.Item label="Queja" value="queja" />
-            <Picker.Item label="Sugerencia" value="sugerencia" />
-            <Picker.Item label="Otro" value="otro" />
-          </Picker>
-          {tipo === 'otro' && (
-            <TextInput
-              style={styles.input}
-              placeholder="Especifica el tipo"
-              value={otroTipo}
-              onChangeText={setOtroTipo}
-            />
-          )}
-
-          <Text style={styles.label}>Categoría</Text>
-          <Picker selectedValue={categoriaSeleccionada} onValueChange={setCategoriaSeleccionada} style={styles.picker}>
-            <Picker.Item label="Selecciona una opción" value="" />
-            <Picker.Item label="Horarios" value="Horarios" />
-            <Picker.Item label="Instalaciones" value="Instalaciones" />
-            <Picker.Item label="Compañeros" value="Compañeros" />
-            <Picker.Item label="Supervisión" value="Supervisión" />
-            <Picker.Item label="Otra" value="otra" />
-          </Picker>
-          {categoriaSeleccionada === 'otra' && (
-            <TextInput
-              style={styles.input}
-              placeholder="Especifica la categoría"
-              value={otraCategoria}
-              onChangeText={setOtraCategoria}
-            />
-          )}
-
-          <Text style={styles.label}>Descripción</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="Describe tu queja o sugerencia"
-            value={descripcion}
-            onChangeText={setDescripcion}
-            multiline
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+          <Image
+            source={require('../../assets/images/LOGO-CUN-03.jpg')}
+            style={styles.backgroundLogo}
+            resizeMode="contain"
           />
+          <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+              <Text style={styles.backButtonText}>← Regresar</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>Quejas y Sugerencias</Text>
 
-          <TouchableOpacity style={styles.button} onPress={enviarReporte}>
-            <Text style={styles.buttonText}>Enviar Reporte</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <Text style={styles.label}>Tipo</Text>
+            <Picker selectedValue={tipo} onValueChange={setTipo} style={styles.picker}>
+              <Picker.Item label="Queja" value="queja" />
+              <Picker.Item label="Sugerencia" value="sugerencia" />
+              <Picker.Item label="Otro" value="otro" />
+            </Picker>
+            {tipo === 'otro' && (
+              <TextInput
+                style={styles.input}
+                placeholder="Especifica el tipo"
+                value={otroTipo}
+                onChangeText={setOtroTipo}
+              />
+            )}
+
+            <Text style={styles.label}>Categoría</Text>
+            <Picker
+              selectedValue={categoriaSeleccionada}
+              onValueChange={setCategoriaSeleccionada}
+              style={styles.picker}
+            >
+              <Picker.Item label="Selecciona una opción" value="" />
+              <Picker.Item label="Horarios" value="Horarios" />
+              <Picker.Item label="Instalaciones" value="Instalaciones" />
+              <Picker.Item label="Compañeros" value="Compañeros" />
+              <Picker.Item label="Supervisión" value="Supervisión" />
+              <Picker.Item label="Otra" value="otra" />
+            </Picker>
+            {categoriaSeleccionada === 'otra' && (
+              <TextInput
+                style={styles.input}
+                placeholder="Especifica la categoría"
+                value={otraCategoria}
+                onChangeText={setOtraCategoria}
+              />
+            )}
+
+            <Text style={styles.label}>Descripción</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Describe tu queja o sugerencia"
+              value={descripcion}
+              onChangeText={setDescripcion}
+              multiline
+            />
+
+            <TouchableOpacity style={styles.button} onPress={enviarReporte}>
+              <Text style={styles.buttonText}>Enviar Reporte</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }
