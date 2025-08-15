@@ -24,7 +24,8 @@ type Reporte = {
 };
 
 // URL del backend, configurable
-const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://d9058d416679.ngrok-free.app';
+const API_URL = 'https://d77878dfce5c.ngrok-free.app';
+
 
 export default function ReportesAdmin() {
   const router = useRouter();
@@ -34,12 +35,25 @@ export default function ReportesAdmin() {
   const fetchReportes = async () => {
     try {
       const res = await fetch(`${API_URL}/reportes`);
-      const data: Reporte[] = await res.json();
+      console.log('Status:', res.status);
+      console.log('Headers:', res.headers.get('content-type'));
+      const text = await res.text();
+      console.log('Body:', text);
+  
+      if (text.trim().startsWith('<')) {
+        Alert.alert('Error', 'El backend devolvió HTML en lugar de JSON. Revisa la URL.');
+        return;
+      }
+  
+      const data: Reporte[] = JSON.parse(text);
       setReportes(data);
     } catch (error) {
       console.error('Error al obtener reportes:', error);
+      Alert.alert('Error', 'No se pudo conectar con el backend');
     }
   };
+  
+  
 
   const cambiarEstado = async (id: string, nuevoEstado: Reporte['estado'], comentario: string) => {
     try {

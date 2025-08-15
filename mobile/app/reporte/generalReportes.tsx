@@ -22,7 +22,7 @@ type Reporte = {
 };
 
 // URL del backend, configurable
-const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://d9058d416679.ngrok-free.app';
+const API_URL = 'https://d77878dfce5c.ngrok-free.app';
 
 export default function GeneralReportes() {
   const router = useRouter();
@@ -31,12 +31,22 @@ export default function GeneralReportes() {
   const fetchReportes = async () => {
     try {
       const res = await fetch(`${API_URL}/reportes`);
-      const data: Reporte[] = await res.json();
+      const text = await res.text();
+  
+      // Si empieza con < probablemente es HTML y no JSON
+      if (text.trim().startsWith("<")) {
+        console.error("❌ El servidor devolvió HTML en lugar de JSON:");
+        console.error(text);
+        return;
+      }
+  
+      const data: Reporte[] = JSON.parse(text);
       setReportes(data);
     } catch (error) {
-      console.error('Error al obtener reportes:', error);
+      console.error("Error al obtener reportes:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchReportes();
