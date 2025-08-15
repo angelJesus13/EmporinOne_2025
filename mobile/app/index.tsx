@@ -1,38 +1,54 @@
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Animated, Easing } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useEffect, useRef } from 'react';
 
 export const options = {
-  title: '', // Header sin texto
+  title: '',
 };
 
 export default function Inicio() {
   const router = useRouter();
+  const scaleAnim = useRef(new Animated.Value(0.5)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 800,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   return (
-    <ImageBackground
-      source={require('../assets/images/ExtCun.jpg')}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      
-      <View style={styles.overlay} />
+    <View style={styles.background}>
+      <Animated.View
+        style={[
+          styles.logoContainer,
+          { transform: [{ scale: scaleAnim }], opacity: fadeAnim },
+        ]}
+      >
+        <ImageBackground
+          source={require('../assets/images/LOGO-CUN-03 2.jpg')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </Animated.View>
 
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <ImageBackground
-            source={require('../assets/images/LOGO-CUN-03 2.jpg')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
+      <Text style={styles.welcomeText}>Bienvenido a EmporinOne</Text>
 
-        <Text style={styles.welcomeText}>Bienvenido a EmporinOne</Text>
-        
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
+        <Text style={styles.buttonText}>Iniciar Sesión</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -41,43 +57,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    
-  },
-  
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)', 
-  },
-  container: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    paddingHorizontal: 30,
-    paddingVertical: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    width: '85%',
+    backgroundColor: '#E5F1FF', // Color suave para destacar el logo
   },
   logoContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 150,
     padding: 30,
     marginBottom: 40,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 10,
+    borderWidth: 2,
+    borderColor: '#0057B7',
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 160,
+    height: 160,
   },
   welcomeText: {
-    fontSize: 22,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: '700',
     color: '#0057B7',
     marginBottom: 50,
     textAlign: 'center',
@@ -85,12 +86,12 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#0057B7',
     paddingVertical: 16,
-    borderRadius: 12,
-    width: '100%',
+    borderRadius: 14,
+    width: '60%',
     alignItems: 'center',
     shadowColor: '#0057B7',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 8,
   },

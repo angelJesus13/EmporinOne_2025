@@ -6,11 +6,15 @@ import {
   Alert,
   TouchableOpacity,
   ImageBackground,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 
 export default function Register() {
   const router = useRouter();
@@ -24,31 +28,26 @@ export default function Register() {
   const [respuestaSeguridad, setRespuestaSeguridad] = useState('');
 
   const firebaseToken = 'token_de_prueba_o_real';
-
   const preguntas = [
     '¿Nombre de tu primera mascota?',
     '¿Nombre de tu ciudad natal?',
     '¿Cuál es tu comida favorita?',
   ];
 
+  const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://d9058d416679.ngrok-free.app';
+
   const handleRegister = async () => {
     if (contraseña !== confirmarContraseña) {
       Alert.alert('Error', 'Las contraseñas no coinciden');
       return;
     }
-    if (
-      !nombreCompleto ||
-      !numeroColaborador ||
-      !contraseña ||
-      !preguntaSeguridad ||
-      !respuestaSeguridad
-    ) {
+    if (!nombreCompleto || !numeroColaborador || !contraseña || !preguntaSeguridad || !respuestaSeguridad) {
       Alert.alert('Error', 'Por favor llena todos los campos obligatorios');
       return;
     }
 
     try {
-      const response = await fetch('http://10.0.24.137:3001/auth/register', {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -68,17 +67,14 @@ export default function Register() {
         const { rol } = data;
         Alert.alert('Éxito', `Usuario registrado con rol: ${rol}`);
 
-        if (rol === 'rh_admin') {
-          router.replace('/rh-admin');
-        } else if (rol === 'super_admin') {
-          router.replace('/super-admin');
-        } else {
-          router.replace('/(tabs)');
-        }
+        if (rol === 'rh_admin') router.replace('/rh-admin');
+        else if (rol === 'super_admin') router.replace('/super-admin');
+        else router.replace('/(tabs)');
       } else {
         Alert.alert('Error', data.mensaje || 'Error en el registro');
       }
     } catch (error) {
+      console.error(error);
       Alert.alert('Error', 'No se pudo conectar al servidor');
     }
   };
@@ -90,126 +86,106 @@ export default function Register() {
       style={styles.background}
       imageStyle={styles.imageStyle}
     >
-      {/* Botón regresar con color negro */}
-      <TouchableOpacity
-        onPress={() => router.push('/login')}
-        style={styles.backButton}
-      >
+      <TouchableOpacity onPress={() => router.push('/login')} style={styles.backButton}>
         <Ionicons name="arrow-back" size={24} color="#000" />
         <Text style={styles.backText}>Inicio</Text>
       </TouchableOpacity>
 
-      <View style={styles.container}>
-        <Text style={styles.title}>Registro</Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1, width: '100%' }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+          <Text style={styles.title}>Registro</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Nombre completo"
-          value={nombreCompleto}
-          onChangeText={setNombreCompleto}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Número de colaborador"
-          value={numeroColaborador}
-          onChangeText={setNumeroColaborador}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Correo (opcional)"
-          value={correo}
-          keyboardType="email-address"
-          onChangeText={setCorreo}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          secureTextEntry
-          value={contraseña}
-          onChangeText={setContraseña}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Confirmar contraseña"
-          secureTextEntry
-          value={confirmarContraseña}
-          onChangeText={setConfirmarContraseña}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre completo"
+            value={nombreCompleto}
+            onChangeText={setNombreCompleto}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Número de colaborador"
+            value={numeroColaborador}
+            onChangeText={setNumeroColaborador}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Correo (opcional)"
+            value={correo}
+            keyboardType="email-address"
+            onChangeText={setCorreo}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            secureTextEntry
+            value={contraseña}
+            onChangeText={setContraseña}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar contraseña"
+            secureTextEntry
+            value={confirmarContraseña}
+            onChangeText={setConfirmarContraseña}
+          />
 
-        <Text style={{ marginBottom: 4, fontWeight: 'bold' }}>
-          Pregunta de seguridad
-        </Text>
-        <Picker
-          selectedValue={preguntaSeguridad}
-          onValueChange={(itemValue) => setPreguntaSeguridad(itemValue)}
-          style={{ marginBottom: 12 }}
-        >
-          <Picker.Item label="Selecciona una pregunta" value="" />
-          {preguntas.map((pregunta, index) => (
-            <Picker.Item key={index} label={pregunta} value={pregunta} />
-          ))}
-        </Picker>
+          <Text style={styles.label}>Pregunta de seguridad</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={preguntaSeguridad}
+              onValueChange={(itemValue) => setPreguntaSeguridad(itemValue)}
+            >
+              <Picker.Item label="Selecciona una pregunta" value="" />
+              {preguntas.map((pregunta, index) => (
+                <Picker.Item key={index} label={pregunta} value={pregunta} />
+              ))}
+            </Picker>
+          </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Respuesta de seguridad"
-          value={respuestaSeguridad}
-          onChangeText={setRespuestaSeguridad}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Respuesta de seguridad"
+            value={respuestaSeguridad}
+            onChangeText={setRespuestaSeguridad}
+          />
 
-        <TouchableOpacity style={styles.button} onPress={handleRegister}>
-          <Text style={styles.buttonText}>Registrarse</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.button} onPress={handleRegister}>
+            <Text style={styles.buttonText}>Registrarse</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0000',
-  },
-  imageStyle: {
-    opacity: 0.1,
-    position: 'absolute',
-    width: 200,
-    height: 200,
-    top: '50%',
-    left: '50%',
-    marginLeft: -100,
-    marginTop: -100,
-  },
+  background: { flex: 1, backgroundColor: '#f0f4f7' },
+  imageStyle: { opacity: 0.05, position: 'absolute', width: 250, height: 250, top: '40%', left: '50%', marginLeft: -125, marginTop: -125 },
   backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    position: 'absolute',
-    top: 50,
-    left: 24,
-    zIndex: 10,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
+    flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 50, left: 24, zIndex: 10,
+    backgroundColor: 'rgba(255,255,255,0.85)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 25,
+    shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, elevation: 2
   },
-  backText: {
-    marginLeft: 8,
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '500',
+  backText: { marginLeft: 8, color: '#000', fontSize: 16, fontWeight: '500' },
+  container: { padding: 24, paddingTop: 120, paddingBottom: 40 },
+  title: { fontSize: 28, marginBottom: 24, fontWeight: 'bold', textAlign: 'center', color: '#0057B7' },
+  input: {
+    backgroundColor: '#fff', borderRadius: 12, padding: 14, marginBottom: 16,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, elevation: 2,
+    borderWidth: 1, borderColor: '#ddd'
   },
-  container: { flex: 1, justifyContent: 'center', padding: 24, width: '100%' },
-  title: { fontSize: 24, marginBottom: 24, textAlign: 'center' },
-  input: { borderWidth: 1, marginBottom: 12, padding: 10, borderRadius: 8 },
+  label: { fontWeight: '600', marginBottom: 6, color: '#333' },
+  pickerContainer: {
+    backgroundColor: '#fff', borderRadius: 12, marginBottom: 16,
+    borderWidth: 1, borderColor: '#ddd', overflow: 'hidden',
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, elevation: 2
+  },
   button: {
-    backgroundColor: '#007AF4',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+    backgroundColor: '#007AF4', padding: 16, borderRadius: 12, alignItems: 'center',
+    shadowColor: '#007AF4', shadowOpacity: 0.4, shadowRadius: 6, elevation: 3
   },
-  buttonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+  buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
 });

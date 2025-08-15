@@ -14,8 +14,12 @@ import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
+import Constants from 'expo-constants';
 
 const { width } = Dimensions.get('window');
+
+// URL del backend, configurable
+const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://d9058d416679.ngrok-free.app';
 
 export default function Reportes() {
   const router = useRouter();
@@ -25,15 +29,12 @@ export default function Reportes() {
   const [descripcion, setDescripcion] = useState('');
   const [otroTipo, setOtroTipo] = useState('');
   const [otraCategoria, setOtraCategoria] = useState('');
-
-  // NUEVO: rol del usuario
   const [rol, setRol] = useState<'admin' | 'colaborador' | null>(null);
 
   useEffect(() => {
-    // Aquí se obtiene el rol, puede ser desde AsyncStorage o Context
     const fetchRol = async () => {
-      // Ejemplo temporal:
-      const storedRol = 'colaborador'; // 'admin' o 'colaborador'
+      // TODO: obtener rol desde AsyncStorage o Context
+      const storedRol = 'colaborador';
       setRol(storedRol as 'admin' | 'colaborador');
     };
     fetchRol();
@@ -49,7 +50,7 @@ export default function Reportes() {
     }
 
     try {
-      const response = await axios.post('http://10.0.24.137:3001/reportes', {
+      const response = await axios.post(`${API_URL}/reportes`, {
         tipo: finalTipo,
         categoria: finalCategoria,
         descripcion,
@@ -62,21 +63,18 @@ export default function Reportes() {
       setOtroTipo('');
       setOtraCategoria('');
     } catch (error) {
-      console.error(error);
+      console.error('Error enviando reporte:', error);
       Alert.alert('Error', 'No se pudo enviar el reporte.');
     }
   };
 
-  // NUEVO: cerrar sesión
   const cerrarSesion = () => {
     Alert.alert('Cerrar sesión', '¿Deseas cerrar sesión?', [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Sí',
         onPress: () => {
-          // Aquí limpiar almacenamiento si aplica
-          // AsyncStorage.clear();
-          router.replace('/login'); // vuelve al login.tsx raíz
+          router.replace('/login');
         },
       },
     ]);
@@ -92,9 +90,6 @@ export default function Reportes() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
-        
-
-          {/* Botón de regreso */}
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Text style={styles.backButtonText}>← Regresar</Text>
           </TouchableOpacity>
@@ -163,101 +158,17 @@ export default function Reportes() {
 }
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 40,
-    paddingTop: 60,
-    alignItems: 'center',
-  },
-  backgroundLogo: {
-    position: 'absolute',
-    width: width * 0.8,
-    height: width * 0.6,
-    opacity: 0.15,
-    top: '30%',
-    alignSelf: 'center',
-    zIndex: -1,
-  },
-  container: {
-    width: '90%',
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-  },
-  bienvenida: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-    color: '#003366',
-  },
-  cerrarButton: {
-    backgroundColor: '#FF3B30',
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  cerrarText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 10,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#0057B7',
-    fontWeight: '600',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    textAlign: 'center',
-    color: '#003366',
-  },
-  label: {
-    fontSize: 16,
-    marginTop: 15,
-    marginBottom: 5,
-    color: '#333',
-  },
-  picker: {
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#D0D0D0',
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#0057B7',
-    paddingVertical: 14,
-    borderRadius: 10,
-    marginTop: 30,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: 'bold',
-  },
+  gradient: { flex: 1 },
+  scrollContent: { paddingBottom: 40, paddingTop: 60, alignItems: 'center' },
+  backgroundLogo: { position: 'absolute', width: width * 0.8, height: width * 0.6, opacity: 0.15, top: '30%', alignSelf: 'center', zIndex: -1 },
+  container: { width: '90%', paddingHorizontal: 20, paddingBottom: 30 },
+  backButton: { alignSelf: 'flex-start', marginBottom: 10 },
+  backButtonText: { fontSize: 16, color: '#0057B7', fontWeight: '600' },
+  title: { fontSize: 26, fontWeight: 'bold', marginBottom: 30, textAlign: 'center', color: '#003366' },
+  label: { fontSize: 16, marginTop: 15, marginBottom: 5, color: '#333' },
+  picker: { backgroundColor: 'rgba(255, 255, 255, 0.5)', borderRadius: 10, marginBottom: 10 },
+  input: { borderWidth: 1, borderColor: '#D0D0D0', borderRadius: 10, backgroundColor: '#fff', padding: 12, fontSize: 16, marginBottom: 10 },
+  textArea: { height: 100, textAlignVertical: 'top' },
+  button: { backgroundColor: '#0057B7', paddingVertical: 14, borderRadius: 10, marginTop: 30, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.15, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 },
+  buttonText: { color: '#fff', fontSize: 17, fontWeight: 'bold' },
 });

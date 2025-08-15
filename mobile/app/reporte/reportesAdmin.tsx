@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 
 type Reporte = {
   _id: string;
@@ -22,6 +23,10 @@ type Reporte = {
   comentario?: string;
 };
 
+// URL del backend, configurable
+const API_URL = 'https://d77878dfce5c.ngrok-free.app';
+
+
 export default function ReportesAdmin() {
   const router = useRouter();
   const [reportes, setReportes] = useState<Reporte[]>([]);
@@ -29,17 +34,30 @@ export default function ReportesAdmin() {
 
   const fetchReportes = async () => {
     try {
-      const res = await fetch('http://10.0.24.137:3001/reportes');
-      const data: Reporte[] = await res.json();
+      const res = await fetch(`${API_URL}/reportes`);
+      console.log('Status:', res.status);
+      console.log('Headers:', res.headers.get('content-type'));
+      const text = await res.text();
+      console.log('Body:', text);
+  
+      if (text.trim().startsWith('<')) {
+        Alert.alert('Error', 'El backend devolvió HTML en lugar de JSON. Revisa la URL.');
+        return;
+      }
+  
+      const data: Reporte[] = JSON.parse(text);
       setReportes(data);
     } catch (error) {
       console.error('Error al obtener reportes:', error);
+      Alert.alert('Error', 'No se pudo conectar con el backend');
     }
   };
+  
+  
 
   const cambiarEstado = async (id: string, nuevoEstado: Reporte['estado'], comentario: string) => {
     try {
-      const res = await fetch(`http://10.0.24.137:3001/reportes/${id}`, {
+      const res = await fetch(`${API_URL}/reportes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado: nuevoEstado, comentario }),
@@ -113,7 +131,6 @@ export default function ReportesAdmin() {
       style={styles.fondo}
       imageStyle={{ opacity: 0.08, resizeMode: 'contain', width: '100%', height: '100%' }}
     >
-      {/* Header con botones regresar y ver todos */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleRegresar}>
           <Ionicons name="arrow-back-outline" size={16} color="#0057B7" />
@@ -143,16 +160,8 @@ const styles = StyleSheet.create({
     marginTop: 36,
     marginBottom: 10,
   },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#0057B7',
-    fontWeight: '600',
-    marginLeft: 4,
-  },
+  backButton: { flexDirection: 'row', alignItems: 'center' },
+  backButtonText: { fontSize: 16, color: '#0057B7', fontWeight: '600', marginLeft: 4 },
   generalButton: {
     backgroundColor: '#007AFF',
     padding: 8,
@@ -182,10 +191,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     backgroundColor: '#f9f9f9',
   },
-  botonesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  botonesContainer: { flexDirection: 'row', justifyContent: 'space-between' },
   botonMitad: {
     flex: 0.48,
     flexDirection: 'row',
@@ -195,8 +201,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#007AFF',
   },
-  botonTexto: {
-    color: '#fff',
-    fontWeight: '600',
-  },
+  botonTexto: { color: '#fff', fontWeight: '600' },
 });
