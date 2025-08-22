@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
+import Constants from 'expo-constants';
 
 type Tramite = {
   _id: string;
@@ -33,20 +34,21 @@ export default function AdminSolicitudes() {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [actualizando, setActualizando] = useState('');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Administración del personal');
+    const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://64b150907a04.ngrok-free.app';
 
   useEffect(() => {
     obtenerSolicitudes();
   }, []);
 
   const obtenerSolicitudes = () => {
-    axios.get('http://192.168.100.17:3001/solicitudes')
+    axios.get(`${API_URL}:3001/solicitudes`)
       .then(res => setSolicitudes(res.data))
       .catch(err => console.error('Error al obtener solicitudes', err));
   };
 
   const actualizarEstado = (id: string, nuevoEstado: string) => {
     setActualizando(id);
-    axios.put(`http://192.168.100.17:3001/solicitudes/${id}/estado`, { estado: nuevoEstado })
+    axios.put(`${API_URL}:3001/solicitudes/${id}/estado`, { estado: nuevoEstado })
       .then(() => {
         obtenerSolicitudes(); 
         Alert.alert('Éxito', 'Estado actualizado');

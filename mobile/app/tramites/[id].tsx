@@ -12,6 +12,7 @@ import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { crearSolicitud } from './tramitesApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
 type Tramite = {
   _id: string;
@@ -33,13 +34,12 @@ export default function TramiteDetalleScreen() {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [mensaje, setMensaje] = useState('');
-
-
+  const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://64b150907a04.ngrok-free.app';
   
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://192.168.100.19:3001/tramites/${id}`)
+        .get(`http://API_URL:3001/tramites/${id}`)
         .then((res) => {
           setTramite(res.data);
           setLoading(false);

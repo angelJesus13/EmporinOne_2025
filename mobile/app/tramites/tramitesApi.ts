@@ -1,7 +1,10 @@
 import axios from 'axios';
+import Constants from 'expo-constants';
+
+const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://64b150907a04.ngrok-free.app';
 
 const API = axios.create({
-    baseURL:'http://192.168.100.19:3001'
+    baseURL: `http://${API_URL}:3001`,
 })
 
 export const fetchTramites = () => API.get('/tramites')

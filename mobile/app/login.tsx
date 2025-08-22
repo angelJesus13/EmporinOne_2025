@@ -4,6 +4,7 @@ import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Video } from 'expo-av';
+import Constants from 'expo-constants';
 
 export default function Login() {
   const router = useRouter();
@@ -17,9 +18,8 @@ export default function Login() {
     }
 
     try {
-
-      const res = await fetch('http://192.168.100.19:3001/auth/login', {
-
+      const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://64b150907a04.ngrok-free.app';
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identificador, contraseña }),

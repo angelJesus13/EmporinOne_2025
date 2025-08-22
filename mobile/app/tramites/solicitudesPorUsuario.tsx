@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Constants from 'expo-constants';
 
 type Solicitud = {
   _id: string;
@@ -27,13 +28,15 @@ export default function SolicitudesPorUsuario() {
       }
 
       try {
-        const res = await axios.get(`http://192.168.100.19:3001/solicitudes/usuario/${usuarioId}`);
+          const API_URL = Constants.expoConfig?.extra?.API_URL || 'https://64b150907a04.ngrok-free.app';
+
+        const res = await axios.get(`${API_URL}:3001/solicitudes/usuario/${usuarioId}`);
         const solicitudesOriginales: Solicitud[] = res.data;
 
         const solicitudesConNombre = await Promise.all(
           solicitudesOriginales.map(async (solicitud) => {
             try {
-              const tramiteRes = await axios.get(`http://192.168.100.19:3001/tramites/${solicitud.tramiteId}`);
+              const tramiteRes = await axios.get(`http://API_URL:3001/tramites/${solicitud.tramiteId}`);
               return {
                 ...solicitud,
                 tramiteNombre: tramiteRes.data.nombreTramite,
